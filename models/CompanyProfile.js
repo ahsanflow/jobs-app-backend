@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-const companyProfileSchema = new mongoose.Schema({
+const companyProfileSchema = new mongoose.Schema(
+  {
     companyName: { type: String, default: null },
     email: { type: String, required: true },
     phone: { type: String, required: true },
@@ -11,20 +12,20 @@ const companyProfileSchema = new mongoose.Schema({
     allowInSearch: { type: Boolean, default: false },
     about: { type: String, default: null },
     address: {
-        country: { type: String, required: true },
-        city: { type: String, required: true },
-        fullAddress: { type: String, required: true },
-        latitude: { type: String, default: null },
-        longitude: { type: String, default: null },
+      country: { type: String, required: true },
+      city: { type: String, required: true },
+      fullAddress: { type: String, required: true },
+      latitude: { type: String, default: null },
+      longitude: { type: String, default: null },
     },
     socialLinks: {
-        facebook: { type: String, default: null },
-        twitter: { type: String, default: null },
-        linkedin: { type: String, default: null },
-        googlePlus: { type: String, default: null },
+      facebook: { type: String, default: null },
+      twitter: { type: String, default: null },
+      linkedin: { type: String, default: null },
+      googlePlus: { type: String, default: null },
     },
-}, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
-const CompanyProfile = mongoose.model('CompanyProfile', companyProfileSchema);
-
-module.exports = CompanyProfile;
+export default mongoose.model("CompanyProfile", companyProfileSchema);
