@@ -3,6 +3,7 @@ import { connectDB } from "../config/database.js";
 import CompanyProfile from "../models/CompanyProfile.js";
 import CandidateProfile from "../models/CandidateProfile.js";
 import User from "../models/User.js";
+import { faker } from "@faker-js/faker";
 
 const seedUsers = async () => {
   await User.deleteMany({});
