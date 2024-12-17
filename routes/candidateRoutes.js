@@ -1,5 +1,5 @@
 import express from "express";
-import CandidateProfile from "../models/CandidateProfile.js"; // Ensure this is using the correct path
+import CandidateProfile from "../models/CandidateProfile.js";
 import { faker } from "@faker-js/faker";
 
 const router = express.Router();
