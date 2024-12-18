@@ -15,26 +15,24 @@ const jobsSchema = new mongoose.Schema(
     location: {
       country: { type: String },
       state: { type: String, default: null },
-      city: { type: String, required: true },
+      city: { type: String },
       latitude: { type: String, default: null },
       longitude: { type: String, default: null },
     },
-    time: { type: Number }, // Unix time
     salary: {
       min: { type: Number, default: 0 },
       max: { type: Number, default: 0 },
     },
     jobType: [
       {
-        styleClass: { type: String, required: true }, // e.g., "time"
-        type: { type: String, required: true }, // e.g., "Full Time"
+        styleClass: { type: String }, // e.g., "time"
+        type: { type: String }, // e.g., "Full Time"
       },
     ],
-    link: { type: String, required: true }, // Job link, e.g., https://segment.com
+    link: { type: String }, // Job link, e.g., https://segment.com
     tags: [{ type: String }], // Tags like ["freelance", "android"]
-    category: { type: String, required: true }, // Category like IT, Banking
-    created_at: { type: Number, required: true }, // Unix time for creation
-    expire_at: { type: Number, required: true }, // Unix time for expiry
+    category: { type: String }, // Category like IT, Banking
+    expire_at: { type: Date }, // time for expiry
     experience: { type: String, default: "Fresh" }, // e.g., Fresh, 2-3 years
     totalSalary: { type: String, default: null }, // Total salary information
   },

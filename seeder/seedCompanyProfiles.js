@@ -39,8 +39,8 @@ export const seedCompanyProfiles = async (count = 5) => {
 
     // Insert into the database
     const insertedCompanies = await CompanyProfile.insertMany(companyProfiles);
-    return insertedCompanies; // Explicitly return the created companies
     console.log("Company Profiles seeded!");
+    return insertedCompanies; // Explicitly return the created companies
   } catch (error) {
     console.error("Error seeding Company Profiles:", error);
     throw error;

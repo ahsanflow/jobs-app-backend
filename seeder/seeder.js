@@ -13,19 +13,16 @@ const seedAllData = async () => {
     const users = await seedUsers(2);
 
     // Seed Company Profiles
-    const companies = await seedCompanyProfiles(5);
-    console.log("comp");
-    console.log(companies);
-    // Seed Candidate Profiles
-    await seedCandidateProfiles(
-      users.map((user) => user._id),
-      10
-    );
-
+    const companies = await seedCompanyProfiles(15);
     // Seed Jobs
     await seedJobs(
       companies.map((company) => company._id),
-      10
+      100
+    );
+    // Seed Candidate Profiles
+    await seedCandidateProfiles(
+      users.map((user) => user._id),
+      20
     );
 
     console.log("All data seeded successfully!");

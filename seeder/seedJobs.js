@@ -26,14 +26,12 @@ export const seedJobs = async (companyIds, count = 10) => {
           country: faker.location.country(),
           city: faker.location.city(),
         },
-        time: Math.floor(Date.now() / 1000),
         salary: { min: 50000, max: 90000 },
         jobType: [{ styleClass: "time", type: "Full Time" }],
         link: faker.internet.url(),
         tags: faker.helpers.arrayElements(["Remote", "Full-stack"], 2),
         category: "Technology",
-        created_at: Math.floor(Date.now() / 1000),
-        expire_at: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+        expire_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days later in ISO format
         experience: "2-3 years",
         totalSalary: faker.finance.amount(50000, 90000, 0),
       });

@@ -1,13 +1,13 @@
 import express from "express";
+import dotenv from "dotenv";
 import { connectDB } from "./config/database.js"; // Ensure using ES import
 import candidateRoutes from "./routes/candidateRoutes.js"; // ES module import
 import companyRoutes from "./routes/companyRoutes.js";
 import authRoutes from "./routes/authRoutes.js"; // ES module import
 import jobsRoutes from "./routes/jobsRoutes.js"; // ES module import
 
+dotenv.config();
 const app = express(); // Initialize the app here
-
-const PORT = 3000; // Set the correct port
 
 // Middleware for JSON body parsing
 app.use(express.json());
