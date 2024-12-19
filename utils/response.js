@@ -4,6 +4,7 @@ export const sendResponse = (
   success,
   message,
   data = {},
+  metadata = {},
   error = null
 ) => {
   const response = {
@@ -11,6 +12,7 @@ export const sendResponse = (
     statusCode,
     message,
     data,
+    metadata,
     error: process.env.NODE_ENV === "development" ? error : undefined,
   };
   res.status(statusCode).json(response);

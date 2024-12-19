@@ -3,7 +3,7 @@ import { sendResponse } from "../utils/response.js";
 import { getPagination } from "../utils/pagination.js";
 
 // **1. Get All Jobs (with Pagination)**
-export const getJobs = async (req, res) => {
+export const index = async (req, res) => {
   try {
     const { skip, limit, page, pageSize } = getPagination(req.query);
     const q = req.query;
@@ -36,18 +36,25 @@ export const getJobs = async (req, res) => {
     };
 
     // Send response
-    sendResponse(res, 200, true, "Jobs retrieved successfully", {
-      jobs,
+    sendResponse(res, 200, true, "Jobs retrieved successfully", jobs, {
       count,
       pagination,
     });
   } catch (error) {
-    sendResponse(res, 500, false, "Error retrieving jobs", {}, error.message);
+    sendResponse(
+      res,
+      500,
+      false,
+      "Error retrieving jobs",
+      {},
+      {},
+      error.message
+    );
   }
 };
 
 // **2. Get a Single Job by ID**
-export const getJobById = async (req, res) => {
+export const show = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -57,27 +64,35 @@ export const getJobById = async (req, res) => {
       return sendResponse(res, 404, false, "Job not found");
     }
 
-    sendResponse(res, 200, true, "Job retrieved successfully", { job });
+    sendResponse(res, 200, true, "Job retrieved successfully", job);
   } catch (error) {
-    sendResponse(res, 500, false, "Error retrieving job", {}, error.message);
+    sendResponse(
+      res,
+      500,
+      false,
+      "Error retrieving job",
+      {},
+      {},
+      error.message
+    );
   }
 };
 
 // **3. Create a Job**
-export const createJob = async (req, res) => {
+export const store = async (req, res) => {
   try {
     const jobData = req.body;
 
     const job = await Jobs.create(jobData);
 
-    sendResponse(res, 201, true, "Job created successfully", { job });
+    sendResponse(res, 201, true, "Job created successfully", job);
   } catch (error) {
-    sendResponse(res, 500, false, "Error creating job", {}, error.message);
+    sendResponse(res, 500, false, "Error creating job", {}, {}, error.message);
   }
 };
 
 // **4. Update a Job by ID**
-export const updateJobById = async (req, res) => {
+export const update = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -88,13 +103,13 @@ export const updateJobById = async (req, res) => {
       return sendResponse(res, 404, false, "Job not found");
     }
 
-    sendResponse(res, 200, true, "Job updated successfully", { job });
+    sendResponse(res, 200, true, "Job updated successfully", job);
   } catch (error) {
-    sendResponse(res, 500, false, "Error updating job", {}, error.message);
+    sendResponse(res, 500, false, "Error updating job", {}, {}, error.message);
   }
 };
 // **5. Delete a Job by ID**
-export const deleteJobById = async (req, res) => {
+export const destroy = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -104,92 +119,8 @@ export const deleteJobById = async (req, res) => {
       return sendResponse(res, 404, false, "Job not found");
     }
 
-    sendResponse(res, 200, true, "Job deleted successfully", { job });
+    sendResponse(res, 200, true, "Job deleted successfully");
   } catch (error) {
-    sendResponse(res, 500, false, "Error deleting job", {}, error.message);
-  }
-};
-
-// **6. Search Jobs**
-export const searchJobs = async (req, res) => {
-  try {
-    const { query } = req.query;
-
-    const searchConditions = {
-      $or: [
-        { jobTitle: { $regex: query, $options: "i" } },
-        { description: { $regex: query, $options: "i" } },
-        { "location.city": { $regex: query, $options: "i" } },
-      ],
-    };
-
-    const jobs = await Jobs.find(searchConditions);
-    const count = await Jobs.countDocuments(searchConditions);
-    sendResponse(res, 200, true, "Search results retrieved successfully", {
-      jobs,
-      count,
-    });
-  } catch (error) {
-    sendResponse(res, 500, false, "Error searching jobs", {}, error.message);
-  }
-};
-
-// **7. Get Jobs by Company ID**
-export const getJobsByCompanyId = async (req, res) => {
-  try {
-    const { companyId } = req.params;
-
-    const jobs = await Jobs.find({ company: companyId });
-
-    if (!jobs || jobs.length === 0) {
-      return sendResponse(res, 404, false, "No jobs found for this company");
-    }
-
-    sendResponse(res, 200, true, "Jobs retrieved successfully", { jobs });
-  } catch (error) {
-    sendResponse(res, 500, false, "Error retrieving jobs", {}, error.message);
-  }
-};
-
-// **8. Get Expired Jobs**
-export const getExpiredJobs = async (req, res) => {
-  try {
-    const currentDate = new Date();
-
-    const expiredJobs = await Jobs.find({ expire_at: { $lt: currentDate } });
-
-    if (!expiredJobs || expiredJobs.length === 0) {
-      return sendResponse(res, 404, false, "No expired jobs found");
-    }
-
-    sendResponse(res, 200, true, "Expired jobs retrieved successfully", {
-      expiredJobs,
-    });
-  } catch (error) {
-    sendResponse(
-      res,
-      500,
-      false,
-      "Error retrieving expired jobs",
-      {},
-      error.message
-    );
-  }
-};
-
-// **9. Get Jobs by Category**
-export const getJobsByCategory = async (req, res) => {
-  try {
-    const { category } = req.params;
-
-    const jobs = await Jobs.find({ category });
-
-    if (!jobs || jobs.length === 0) {
-      return sendResponse(res, 404, false, "No jobs found in this category");
-    }
-
-    sendResponse(res, 200, true, "Jobs retrieved successfully", { jobs });
-  } catch (error) {
-    sendResponse(res, 500, false, "Error retrieving jobs", {}, error.message);
+    sendResponse(res, 500, false, "Error deleting job", {}, {}, error.message);
   }
 };

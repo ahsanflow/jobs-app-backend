@@ -1,45 +1,28 @@
-// routes/jobs.js
-
 import express from "express";
 import {
-  getJobs,
-  getJobById,
-  createJob,
-  updateJobById,
-  deleteJobById,
-  searchJobs,
-  getJobsByCompanyId,
-  getExpiredJobs,
-  getJobsByCategory,
+  index,
+  store,
+  show,
+  update,
+  destroy,
 } from "../controllers/jobsController.js";
+import { authenticate, authorizeRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Get All Jobs (with Pagination)**
-router.get("/", getJobs);
-
-// Search Jobs**
-router.get("/search", searchJobs);
-
-// Get Expired Jobs**
-router.get("/expired", getExpiredJobs);
+router.get("/", authenticate, authorizeRoles("candidate"), index);
 
 // Get a Single Job by ID**
-router.get("/:id", getJobById);
+router.get("/:id", show);
 
 // Create a Job**
-router.post("/", createJob);
+router.post("/", store);
 
 // Update a Job by ID**
-router.put("/:id", updateJobById);
+router.put("/:id", update);
 
 // Delete a Job by ID**
-router.delete("/:id", deleteJobById);
-
-// Get Jobs by Company ID**
-router.get("/company/:companyId", getJobsByCompanyId);
-
-// **9. Get Jobs by Category**
-router.get("/category/:category", getJobsByCategory);
+router.delete("/:id", destroy);
 
 export default router;

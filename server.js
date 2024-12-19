@@ -5,9 +5,20 @@ import candidateRoutes from "./routes/candidateRoutes.js"; // ES module import
 import companyRoutes from "./routes/companyRoutes.js";
 import authRoutes from "./routes/authRoutes.js"; // ES module import
 import jobsRoutes from "./routes/jobsRoutes.js"; // ES module import
+import cors from "cors"; // Import cors
+// CORS configuration
 
 dotenv.config();
 const app = express(); // Initialize the app here
+
+const corsOptions = {
+  origin: process.env.FRONTEND_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions)); // Enable CORS with the options
 
 // Middleware for JSON body parsing
 app.use(express.json());

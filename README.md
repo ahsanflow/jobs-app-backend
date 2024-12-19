@@ -59,6 +59,43 @@ npm run seed
 
 ### API Endpoints
 
+# Authentication API
+
+This section explains the authentication routes for your application and how to set up the JWT secret key.
+
+## Authentication Routes
+
+### **1. Login Route**
+
+- **Endpoint**: `POST /api/auth/login`
+- **Request Body**:
+  - `email`: User's email
+  - `password`: User's password
+
+### **2. Logout Route**
+
+- **Endpoint**: `POST /api/auth/logout`
+- **Headers**:
+  - `Authorization`: Bearer `<your_jwt_token>`
+
+### **3. Protected Routes**
+
+To access protected routes, you must pass a valid JWT token in the `Authorization` header as a `Bearer` token.
+
+---
+
+## Setting Up the Secret Key for JWT
+
+To securely sign and verify JWT tokens, you need to set a secret key in your environment.
+
+### **1. Generate a Secret Key**
+
+Use the following command in the terminal to generate a secure random secret key for JWT:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
 - **Jobs**: `GET /api/jobs` - Retrieve all jobs with associated company details.
 
 ### Technologies Used
