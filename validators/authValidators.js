@@ -1,7 +1,6 @@
 import { body } from "express-validator";
 
 export const registerValidation = [
-  body("name").notEmpty().withMessage("Name is required"),
   body("email").isEmail().withMessage("A valid email is required"),
   body("password")
     .isLength({ min: 6 })
@@ -10,7 +9,7 @@ export const registerValidation = [
     .notEmpty()
     .withMessage("Role is required")
     .isIn(["admin", "candidate", "employer"])
-    .withMessage("Invalid role specified"),
+    .withMessage("Invalid or no role specified"),
 ];
 
 export const loginValidation = [
