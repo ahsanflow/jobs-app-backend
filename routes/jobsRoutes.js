@@ -11,7 +11,8 @@ import { authenticate, authorizeRoles } from "../middleware/auth.js";
 const router = express.Router();
 
 // Get All Jobs (with Pagination)**
-router.get("/", authenticate, authorizeRoles("candidate"), index);
+// router.get("/", authenticate, authorizeRoles("candidate"), index);
+router.get("/", index);
 
 // Get a Single Job by ID**
 router.get("/:id", show);

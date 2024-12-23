@@ -1,3 +1,5 @@
+import { NODE_ENV } from "../config/index.js";
+
 export const sendResponse = (
   res,
   statusCode,
@@ -13,7 +15,7 @@ export const sendResponse = (
     message,
     data,
     metadata,
-    error: process.env.NODE_ENV === "development" ? error : undefined,
+    error: NODE_ENV === "development" ? error : undefined,
   };
   res.status(statusCode).json(response);
 };

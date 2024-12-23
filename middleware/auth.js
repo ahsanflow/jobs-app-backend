@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { sendResponse } from "../utils/response.js";
+import { JWT_SECRET } from "../config/index.js";
 
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -16,7 +17,7 @@ export const authenticate = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded; // Add user info to request
     next();
   } catch (error) {
