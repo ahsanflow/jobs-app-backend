@@ -38,6 +38,12 @@ app.get("/", (req, res) => {
 app.get("/api/test", (req, res) => {
   res.json({ message: "API is working!" });
 });
+app.use((req, res, next) => {
+  res.status(404).json({
+    error: "Route not found",
+    message: "The requested URL was not found on the server",
+  });
+});
 
 // Start server
 
