@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { sendResponse } from "../utils/response.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
+import { JWT_SECRET, NODE_ENV } from "../config/index.js";
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -55,15 +56,13 @@ export const loginUser = async (req, res) => {
     }
 
     // Generate JWT
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
     // Send the token as an HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true, // Prevents JavaScript access to the cookie
-      secure: process.env.NODE_ENV === "production", // Only use the secure flag in production
+      secure: NODE_ENV === "production", // Only use the secure flag in production
       maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
       sameSite: "Strict", // Helps prevent CSRF attacks
     });
@@ -85,7 +84,7 @@ export const logoutUser = (req, res) => {
     // Clear the token cookie by setting it to an expired date
     res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: NODE_ENV === "production",
       sameSite: "Strict",
     });
 
@@ -104,7 +103,7 @@ export const refreshToken = async (req, res) => {
     }
 
     // Verify the token
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
       if (err) {
         return sendResponse(res, 401, false, "Invalid or expired token");
       }
@@ -112,7 +111,7 @@ export const refreshToken = async (req, res) => {
       // Generate a new token
       const newToken = jwt.sign(
         { id: decoded.id, role: decoded.role },
-        process.env.JWT_SECRET,
+        JWT_SECRET,
         { expiresIn: "1h" }
       );
 

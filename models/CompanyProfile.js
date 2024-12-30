@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const companyProfileSchema = new mongoose.Schema(
   {
-    companyName: { type: String, default: null },
+    companyName: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String, required: true },
     website: { type: String, default: null },

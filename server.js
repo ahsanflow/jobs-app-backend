@@ -32,11 +32,43 @@ app.use("/api/candidates", candidateRoutes);
 app.use("/api/jobs", jobsRoutes);
 app.use("/api/company", companyRoutes);
 app.use("/api/auth", authRoutes); // Use the authRoutes
-app.get("/", (req, res) => {
-  res.status(401).json({ message: "Restricted Area!" });
-});
+// app.get("/", (req, res) => {
+//   res.status(401).json({ message: "Restricted Area!" });
+// });
 app.get("/api/test", (req, res) => {
   res.json({ message: "API is working!" });
+});
+// Middleware to get all routes
+app.get("/", (req, res) => {
+  const routes = [];
+
+  function extractRoutes(stack, parentPath = "") {
+    stack.forEach((middleware) => {
+      if (middleware.route) {
+        // Routes registered directly
+        const methods = Object.keys(middleware.route.methods)
+          .join(", ")
+          .toUpperCase();
+        routes.push(`${methods} ${parentPath}${middleware.route.path}`);
+      } else if (middleware.name === "router" && middleware.handle.stack) {
+        // Handle nested routers
+        extractRoutes(
+          middleware.handle.stack,
+          parentPath +
+            middleware.regexp.source
+              .replace(/\\/g, "")
+              .replace("^", "")
+              .replace("?", "")
+        );
+      }
+    });
+  }
+
+  extractRoutes(app._router.stack);
+
+  // Format the routes for display
+  const routeList = routes.map((route) => route);
+  res.send(`<pre>${routeList.join("\n")}</pre>`);
 });
 app.use((req, res, next) => {
   res.status(404).json({
