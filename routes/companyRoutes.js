@@ -7,7 +7,7 @@ import {
   destroy,
 } from "../controllers/companyController.js";
 import { validateRequest } from "../middleware/validateRequest.js";
-import { companyProfileValidationRules } from "../validators/authValidators.js";
+import { validateCompanyProfile } from "../validators/companyProfileValidator.js";
 const router = express.Router();
 
 // Get All Jobs (with Pagination)**
@@ -17,7 +17,7 @@ router.get("/", index);
 router.get("/:id", show);
 
 // Create a Job**
-router.post("/", companyProfileValidationRules, validateRequest, store);
+router.post("/", validateCompanyProfile, validateRequest, store);
 
 // Update a Job by ID**
 router.put("/:id", update);

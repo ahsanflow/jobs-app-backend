@@ -4,43 +4,44 @@ import { faker } from "@faker-js/faker";
 export const seedCompanyProfiles = async (count = 5) => {
   try {
     console.log("Seeding Company Profiles...");
-    await CompanyProfile.deleteMany({});
+    await CompanyProfile.deleteMany({}); // Clear existing data
 
     const companyProfiles = [];
     for (let i = 0; i < count; i++) {
+      const cname = faker.company.name();
       companyProfiles.push({
-        companyName: faker.company.name(),
+        logo: `https://placehold.co/250x250/eeeeee/31343c/webp?text=${cname}`,
+        cover: `https://placehold.co/800x300/eeeeee/31343c/webp?text=${cname} Cover`,
+        companyName: cname,
         email: faker.internet.email(),
         phone: faker.phone.number(),
         website: faker.internet.url(),
         estSince: faker.date.past(20),
-        teamSize: faker.helpers.arrayElement(["1-10", "11-50", "51-200"]),
-        categories: faker.helpers.arrayElements(
-          ["Banking", "Retail", "Technology", "Sales", "Marketing"],
-          2
-        ),
+        teamSize: faker.number.int({ min: 1, max: 500 }),
+        city: faker.location.city(),
+        country: faker.location.country(),
+        industryType: faker.helpers.arrayElement([
+          "Banking",
+          "Retail",
+          "Technology",
+          "Sales",
+          "Marketing",
+        ]),
         allowInSearch: faker.datatype.boolean(),
-        about: faker.company.catchPhrase(),
-        address: {
-          country: faker.location.country(),
-          city: faker.location.city(),
-          fullAddress: faker.location.streetAddress(),
-          latitude: faker.location.latitude(),
-          longitude: faker.location.longitude(),
-        },
+        aboutCompany: faker.company.catchPhrase(),
         socialLinks: {
-          facebook: "https://www.facebook.com/" + faker.string.uuid(),
-          twitter: "https://www.twitter.com/" + faker.string.uuid(),
-          linkedin: "https://www.linkedin.com/" + faker.string.uuid(),
-          googlePlus: "https://www.googleplus.com/" + faker.string.uuid(),
+          facebook: `https://www.facebook.com/${faker.internet.username()}`,
+          twitter: `https://www.twitter.com/${faker.internet.username()}`,
+          linkedin: `https://www.linkedin.com/in/${faker.internet.username()}`,
+          instagram: `https://www.instagram.com/${faker.internet.username()}`,
         },
       });
     }
 
-    // Insert into the database
+    // Insert the generated data into the database
     const insertedCompanies = await CompanyProfile.insertMany(companyProfiles);
     console.log("Company Profiles seeded!");
-    return insertedCompanies; // Explicitly return the created companies
+    return insertedCompanies;
   } catch (error) {
     console.error("Error seeding Company Profiles:", error);
     throw error;
