@@ -1,8 +1,32 @@
 import { body } from "express-validator";
 
+// Social Links Validation
+const validateSocialLinks = [
+  body("socialLinks.facebook")
+    .optional()
+    .isURL()
+    .withMessage("Facebook must be a valid URL."),
+  body("socialLinks.twitter")
+    .optional()
+    .isURL()
+    .withMessage("Twitter must be a valid URL."),
+  body("socialLinks.linkedin")
+    .optional()
+    .isURL()
+    .withMessage("LinkedIn must be a valid URL."),
+  body("socialLinks.instagram")
+    .optional()
+    .isURL()
+    .withMessage("Instagram must be a valid URL."),
+];
+
+// Main Company Profile Validation
 export const validateCompanyProfile = [
-  body("logo").optional().isURL().withMessage("Logo must be a valid URL."),
-  body("cover").optional().isURL().withMessage("Cover must be a valid URL."),
+  // Logo and Cover
+  body("logo").optional().isString().withMessage("Logo must be a string."),
+  body("cover").optional().isString().withMessage("Cover must be a string."),
+
+  // Basic Information
   body("companyName")
     .notEmpty()
     .withMessage("Company name is required.")
@@ -22,6 +46,8 @@ export const validateCompanyProfile = [
     .optional()
     .isURL()
     .withMessage("Website must be a valid URL."),
+
+  // Other Fields
   body("estSince")
     .optional()
     .isISO8601()
@@ -54,20 +80,7 @@ export const validateCompanyProfile = [
     .optional()
     .isString()
     .withMessage("About company must be a string."),
-  body("socialLinks.facebook")
-    .optional()
-    .isURL()
-    .withMessage("Facebook must be a valid URL."),
-  body("socialLinks.twitter")
-    .optional()
-    .isURL()
-    .withMessage("Twitter must be a valid URL."),
-  body("socialLinks.linkedin")
-    .optional()
-    .isURL()
-    .withMessage("LinkedIn must be a valid URL."),
-  body("socialLinks.instagram")
-    .optional()
-    .isURL()
-    .withMessage("Instagram must be a valid URL."),
+
+  // Social Links Validation
+  ...validateSocialLinks,
 ];

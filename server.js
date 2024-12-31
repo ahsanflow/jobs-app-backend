@@ -6,7 +6,7 @@ import companyRoutes from "./routes/companyRoutes.js";
 import authRoutes from "./routes/authRoutes.js"; // ES module import
 import jobsRoutes from "./routes/jobsRoutes.js"; // ES module import
 import cors from "cors"; // Import cors
-import { FRONTEND_URL, PORT } from "./config/index.js";
+import { FRONTEND_URL, PORT, UPLOAD_DIR } from "./config/index.js";
 // CORS configuration
 
 dotenv.config();
@@ -38,6 +38,12 @@ app.get("/", (req, res) => {
 app.get("/api/test", (req, res) => {
   res.json({ message: "API is working!" });
 });
+
+// Ensure upload directory is set or use default
+const uploadDirectory = UPLOAD_DIR || path.join(__dirname, "uploads");
+
+// Serve static files from the uploads directory
+app.use("/uploads", express.static(uploadDirectory));
 app.use((req, res, next) => {
   res.status(404).json({
     error: "Route not found",

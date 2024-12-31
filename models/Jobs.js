@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const jobsSchema = new mongoose.Schema(
   {
-    jobTitle: { type: String, required: true }, // Backend Developer
-    description: { type: String, required: true }, // Text
+    jobTitle: { type: String, default: null }, // Backend Developer
+    description: { type: String, default: null }, // Text
     keyResponsibilities: [{ type: String }], // Array of list items
     skillExperience: [{ type: String }], // Array of list items
     hours: { type: String, default: null }, // Working hours
