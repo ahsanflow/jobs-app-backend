@@ -4,13 +4,23 @@ import { sendResponse } from "../utils/response.js";
 // Retrieve all Company profiles
 export const index = async (req, res) => {
   try {
-    const companys = await CompanyProfile.find();
+    const companies = await CompanyProfile.find();
+
+    // Get the base URL of the server (e.g., http://localhost:5000)
+    const domain = req.protocol + "://" + req.get("host");
+
+    // Map through the companies and append absolute URLs
+    const companiesWithFullPaths = companies.map((company) => ({
+      ...company.toJSON(),
+      logo: company.logo ? `${domain}/${company.logo}` : null,
+      cover: company.cover ? `${domain}/${company.cover}` : null,
+    }));
     sendResponse(
       res,
       200,
       true,
       "Company profiles retrieved successfully",
-      companys
+      companiesWithFullPaths
     );
   } catch (error) {
     sendResponse(
