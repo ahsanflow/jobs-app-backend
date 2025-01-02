@@ -1,3 +1,4 @@
+import { appendDomainToPaths } from "../helper/urlHelper.js";
 import CompanyProfile from "../models/CompanyProfile.js";
 import { sendResponse } from "../utils/response.js";
 
@@ -6,15 +7,8 @@ export const index = async (req, res) => {
   try {
     const companies = await CompanyProfile.find();
 
-    // Get the base URL of the server (e.g., http://localhost:5000)
     const domain = req.protocol + "://" + req.get("host");
-
-    // Map through the companies and append absolute URLs
-    const companiesWithFullPaths = companies.map((company) => ({
-      ...company.toJSON(),
-      logo: company.logo ? `${domain}/${company.logo}` : null,
-      cover: company.cover ? `${domain}/${company.cover}` : null,
-    }));
+    const companiesWithFullPaths = appendDomainToPaths(companies, domain);
     sendResponse(
       res,
       200,
@@ -57,15 +51,9 @@ export const store = async (req, res) => {
     // Create company profile in the database
     const company = await CompanyProfile.create(companyData);
 
-    // Get the base URL of the server (e.g., http://localhost:5000)
     const domain = req.protocol + "://" + req.get("host");
+    const companyWithFullPaths = appendDomainToPaths(company.toJSON(), domain);
 
-    // Append the domain to the saved relative paths
-    const companyWithFullPaths = {
-      ...company.toJSON(),
-      logo: company.logo ? `${domain}/${company.logo}` : null,
-      cover: company.cover ? `${domain}/${company.cover}` : null,
-    };
     sendResponse(
       res,
       201,
@@ -93,12 +81,15 @@ export const show = async (req, res) => {
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
     }
+    const domain = req.protocol + "://" + req.get("host");
+    const companyWithFullPaths = appendDomainToPaths(company.toJSON(), domain);
+
     sendResponse(
       res,
       200,
       true,
       "Company profile retrieved successfully",
-      company
+      companyWithFullPaths
     );
   } catch (error) {
     sendResponse(
@@ -116,20 +107,38 @@ export const show = async (req, res) => {
 // Update a Company profile by ID
 export const update = async (req, res) => {
   try {
+    // Handle file paths for logo and cover
+    let logoPath = req.files?.logo ? req.files.logo[0].path : null;
+    let coverPath = req.files?.cover ? req.files.cover[0].path : null;
+
+    logoPath = logoPath ? logoPath.replace("uploads\\", "uploads/") : null;
+    coverPath = coverPath ? coverPath.replace("uploads\\", "uploads/") : null;
+
+    // Add file paths to req.body if they exist
+    if (logoPath) req.body.logo = logoPath;
+    if (coverPath) req.body.cover = coverPath;
+
+    // Update company profile
     const company = await CompanyProfile.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
+
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
     }
+
+    // Append domain to paths
+    const domain = req.protocol + "://" + req.get("host");
+    const companyWithFullPaths = appendDomainToPaths(company.toJSON(), domain);
+
     sendResponse(
       res,
       200,
       true,
       "Company profile updated successfully",
-      company
+      companyWithFullPaths
     );
   } catch (error) {
     sendResponse(
