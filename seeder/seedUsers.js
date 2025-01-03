@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import { faker } from "@faker-js/faker";
+import bcrypt from "bcrypt";
 
 export const seedUsers = async (count = 2) => {
   try {
@@ -13,11 +14,12 @@ export const seedUsers = async (count = 2) => {
     //   const password = "password123"; // Or use bcrypt to hash this
     //   users.push({ name, email, password });
     // }
+    const pass = await bcrypt.hash("admin123", 10);
     const users = [
       {
         name: "developer",
         email: "admin@admin.com",
-        password: "admin123",
+        password: pass,
         role: "admin",
       },
     ];

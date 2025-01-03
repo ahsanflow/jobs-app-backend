@@ -43,31 +43,41 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return sendResponse(res, 400, false, "Invalid email or password");
     }
 
-    // Verify the password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return sendResponse(res, 400, false, "Invalid email or password");
     }
 
-    // Generate JWT
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "1h",
+    const accessToken = jwt.sign(
+      { id: user._id, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: "15m", // Short-lived token
+      }
+    );
+    const refreshToken = jwt.sign(
+      { id: user._id, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: "7d", // Long-lived token
+      }
+    );
+
+    // Store refresh token in HTTP-only cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    // Send the token as an HTTP-only cookie
-    res.cookie("token", token, {
-      httpOnly: true, // Prevents JavaScript access to the cookie
-      secure: NODE_ENV === "production", // Only use the secure flag in production
-      maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
-      sameSite: "Strict", // Helps prevent CSRF attacks
-    });
+
     sendResponse(res, 200, true, "Login successful", {
-      token,
+      accessToken,
       user: {
         id: user._id,
         name: user.name,
@@ -96,27 +106,32 @@ export const logoutUser = (req, res) => {
 };
 export const refreshToken = async (req, res) => {
   try {
-    const { token } = req.body;
+    const refreshToken = req.cookies.refreshToken;
 
-    if (!token) {
-      return sendResponse(res, 400, false, "Token is required");
+    if (!refreshToken) {
+      return sendResponse(res, 400, false, "Refresh token is required");
     }
 
-    // Verify the token
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    // Verify the refresh token
+    jwt.verify(refreshToken, JWT_SECRET, (err, decoded) => {
       if (err) {
-        return sendResponse(res, 401, false, "Invalid or expired token");
+        return sendResponse(
+          res,
+          401,
+          false,
+          "Invalid or expired refresh token"
+        );
       }
 
-      // Generate a new token
-      const newToken = jwt.sign(
+      // Generate a new access token
+      const newAccessToken = jwt.sign(
         { id: decoded.id, role: decoded.role },
         JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "15m" }
       );
 
-      sendResponse(res, 200, true, "Token refreshed successfully", {
-        token: newToken,
+      sendResponse(res, 200, true, "Access token refreshed successfully", {
+        accessToken: newAccessToken,
       });
     });
   } catch (error) {

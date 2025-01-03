@@ -3,7 +3,8 @@ import { sendResponse } from "../utils/response.js";
 import { JWT_SECRET } from "../config/index.js";
 
 export const authenticate = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1]; // authoriztion header
+  // const token = req.cookies?.token; // cookie
   if (!token) {
     return sendResponse(
       res,
