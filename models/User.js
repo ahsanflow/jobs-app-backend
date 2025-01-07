@@ -11,6 +11,14 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "candidate", "employer"],
       default: "candidate",
     },
+    companyProfile: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CompanyProfile",
+    }, // Null for candidates
+    candidateProfile: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CandidateProfile",
+    }, // Null for companies
   },
   { timestamps: true }
 );
@@ -26,5 +34,13 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
-
+userSchema.pre("remove", async function (next) {
+  if (this.candidateProfile) {
+    await CandidateProfile.findByIdAndDelete(this.candidateProfile);
+  }
+  if (this.companyProfile) {
+    await CompanyProfile.findByIdAndDelete(this.companyProfile);
+  }
+  next();
+});
 export default mongoose.model("User", userSchema);

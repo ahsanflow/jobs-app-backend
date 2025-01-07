@@ -4,6 +4,8 @@ import { sendResponse } from "../utils/response.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { JWT_SECRET, NODE_ENV } from "../config/index.js";
+import CompanyProfile from "../models/CompanyProfile.js";
+import CandidateProfile from "../models/CandidateProfile.js";
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -17,7 +19,23 @@ export const registerUser = async (req, res) => {
     // Create a new user
     const user = new User({ name, email, password, role });
     await user.save();
-
+    // Now, create corresponding profiles based on the role
+    if (role === "company") {
+      // Create Company Profile
+      const companyProfile = await CompanyProfile.create({
+        userId: user._id,
+        companyName: "Sample Company Name", // Add other fields as needed
+      });
+      user.companyProfile = companyProfile._id; // Link the profile to the user
+    } else if (role === "candidate") {
+      // Create Candidate Profile
+      const candidateProfile = await CandidateProfile.create({
+        userId: user._id,
+        fullName: user.name,
+      });
+      user.candidateProfile = candidateProfile._id; // Link the profile to the user
+    }
+    await user.save();
     sendResponse(res, 201, true, "User registered successfully", {
       user: {
         id: user._id,

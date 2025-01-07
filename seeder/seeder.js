@@ -10,20 +10,21 @@ const seedAllData = async () => {
     console.log("Database connected!");
 
     // Seed Users
-    const users = await seedUsers(2);
+    const users = await seedUsers(10);
 
     // Seed Company Profiles
-    const companies = await seedCompanyProfiles(15);
+    const companyUsers = users.filter((user) => user.role === "employer");
+    const companies = await seedCompanyProfiles(companyUsers);
+
     // Seed Jobs
     await seedJobs(
       companies.map((company) => company._id),
-      100
+      50
     );
+
     // Seed Candidate Profiles
-    await seedCandidateProfiles(
-      users.map((user) => user._id),
-      20
-    );
+    const candidateUsers = users.filter((user) => user.role === "candidate");
+    await seedCandidateProfiles(candidateUsers);
 
     console.log("All data seeded successfully!");
     process.exit(0);

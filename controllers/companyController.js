@@ -5,7 +5,7 @@ import { sendResponse } from "../utils/response.js";
 // Retrieve all Company profiles
 export const index = async (req, res) => {
   try {
-    const companies = await CompanyProfile.find();
+    const companies = await CompanyProfile.find().lean();
 
     const domain = req.protocol + "://" + req.get("host");
     const companiesWithFullPaths = appendDomainToPaths(companies, domain);
@@ -73,7 +73,40 @@ export const store = async (req, res) => {
     );
   }
 };
+// Fetch Logged-in User's Company
+export const getMyCompany = async (req, res) => {
+  try {
+    // Extract user ID from the authenticated request
+    const userId = req.user.id;
 
+    // Find the company associated with the user
+    const company = await CompanyProfile.findOne({ userId }).lean();
+
+    if (!company) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Company not found" });
+    }
+
+    // Append domain to logo and cover paths
+    const domain = req.protocol + "://" + req.get("host");
+    const companyWithPaths = appendDomainToPaths(company, domain);
+
+    // Send the response
+    return res.status(200).json({
+      success: true,
+      message: "Company details retrieved successfully",
+      data: companyWithPaths,
+    });
+  } catch (error) {
+    // Handle any errors
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching company details",
+      error: error.message,
+    });
+  }
+};
 // Retrieve a single Company profile by ID
 export const show = async (req, res) => {
   try {

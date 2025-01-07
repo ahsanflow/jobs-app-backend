@@ -1,18 +1,19 @@
 import CompanyProfile from "../models/CompanyProfile.js";
 import { faker } from "@faker-js/faker";
 
-export const seedCompanyProfiles = async (count = 5) => {
+export const seedCompanyProfiles = async (companyUsers) => {
   try {
     console.log("Seeding Company Profiles...");
-    await CompanyProfile.deleteMany({}); // Clear existing data
-
+    await CompanyProfile.deleteMany({});
     const companyProfiles = [];
-    for (let i = 0; i < count; i++) {
+
+    for (const user of companyUsers) {
       const cname = faker.company.name();
-      companyProfiles.push({
+      const companyProfile = await CompanyProfile.create({
+        userId: user._id,
+        companyName: cname,
         logo: `https://placehold.co/250x250/eeeeee/31343c/webp?text=${cname}`,
         cover: `https://placehold.co/800x300/eeeeee/31343c/webp?text=${cname} Cover`,
-        companyName: cname,
         email: faker.internet.email(),
         phone: faker.phone.number(),
         website: faker.internet.url(),
@@ -30,18 +31,20 @@ export const seedCompanyProfiles = async (count = 5) => {
         allowInSearch: faker.datatype.boolean(),
         aboutCompany: faker.company.catchPhrase(),
         socialLinks: {
-          facebook: `https://www.facebook.com/${faker.internet.username()}`,
-          twitter: `https://www.twitter.com/${faker.internet.username()}`,
-          linkedin: `https://www.linkedin.com/in/${faker.internet.username()}`,
-          instagram: `https://www.instagram.com/${faker.internet.username()}`,
+          facebook: faker.internet.url(),
+          twitter: faker.internet.url(),
+          linkedin: faker.internet.url(),
+          instagram: faker.internet.url(),
         },
       });
+      // Update the user with the company profile reference
+      user.companyProfile = companyProfile._id;
+      await user.save();
+      companyProfiles.push(companyProfile);
     }
 
-    // Insert the generated data into the database
-    const insertedCompanies = await CompanyProfile.insertMany(companyProfiles);
     console.log("Company Profiles seeded!");
-    return insertedCompanies;
+    return companyProfiles;
   } catch (error) {
     console.error("Error seeding Company Profiles:", error);
     throw error;

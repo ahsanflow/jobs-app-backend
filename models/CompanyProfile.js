@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const companyProfileSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true, // Ensures each candidate profile has an associated user
+      unique: true, // Ensures one-to-one relationship
+    },
     logo: { type: String, default: null }, // Logo URL or file path
     cover: { type: String, default: null }, // Cover photo URL or file path
     companyName: { type: String, default: null },
