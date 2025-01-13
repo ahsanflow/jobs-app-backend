@@ -24,14 +24,14 @@ export const registerUser = async (req, res) => {
       // Create Company Profile
       const companyProfile = await CompanyProfile.create({
         userId: user._id,
-        companyName: "Sample Company Name", // Add other fields as needed
+        email: email, // Add other fields as needed
       });
       user.companyProfile = companyProfile._id; // Link the profile to the user
     } else if (role === "candidate") {
       // Create Candidate Profile
       const candidateProfile = await CandidateProfile.create({
         userId: user._id,
-        fullName: user.name,
+        email: user.email,
       });
       user.candidateProfile = candidateProfile._id; // Link the profile to the user
     }

@@ -12,7 +12,7 @@ export const seedCandidateProfiles = async (candidateUsers) => {
         fullName: faker.person.fullName(),
         jobTitle: faker.person.jobTitle(),
         phone: faker.phone.number(),
-        email: faker.internet.email(),
+        email: user.email,
         website: faker.internet.url(),
         currentSalary: `$${faker.finance.amount(40000, 90000, 0)}`,
         expectedSalary: `$${faker.finance.amount(50000, 100000, 0)}`,

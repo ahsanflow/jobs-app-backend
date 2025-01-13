@@ -10,10 +10,10 @@ export const seedUsers = async (count = 10) => {
     const users = [];
     const password = await bcrypt.hash("password123", 10);
     users.push({
-      name: "developer",
-      email: "admin@admin.com",
+      name: "candidate",
+      email: "candidate@candidate.com",
       password: password,
-      role: "admin",
+      role: "candidate",
     });
     users.push({
       name: "Pr1me",
