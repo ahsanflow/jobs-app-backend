@@ -5,7 +5,7 @@ import {
   show,
   update,
   destroy,
-  getMyCompany,
+  // getMyCompany,
 } from "../controllers/companyController.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import { validateCompanyProfile } from "../validators/companyProfileValidator.js";
@@ -19,7 +19,7 @@ router.get("/", authenticate, index);
 // Route to fetch logged-in user's company
 // router.get("/my", authenticate, getMyCompany);
 // Get a Single Company by ID**
-router.get("/:id", show);
+router.get("/:id", authenticate, show);
 
 // Create a Company**
 router.post(
