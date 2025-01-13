@@ -82,8 +82,9 @@ export const show = async (req, res) => {
 // Update a candidate profile by ID
 export const update = async (req, res) => {
   try {
-    const candidate = await CandidateProfile.findByIdAndUpdate(
-      req.params.id,
+    const { id } = req.user; // Extract userId from the authenticated request
+    const candidate = await CandidateProfile.findOneAndUpdate(
+      { userId: id },
       req.body,
       { new: true, runValidators: true }
     );

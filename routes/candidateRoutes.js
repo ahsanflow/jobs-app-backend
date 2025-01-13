@@ -9,19 +9,19 @@ import {
 import { authenticate } from "../middleware/auth.js";
 const router = express.Router();
 
-// Get All Jobs (with Pagination)**
+// Get All candidates (with Pagination)**
 router.get("/", index);
 
-// Get a Single Job by ID**
+// Get a Single candidate by ID**
 router.get("/:id", authenticate, show);
 
-// Create a Job**
-router.post("/", store);
+// Create a candidate**
+router.post("/", authenticate, store);
 
-// Update a Job by ID**
-router.put("/:id", update);
+// Update a candidate by ID**
+router.put("/", authenticate, update);
 
-// Delete a Job by ID**
+// Delete a candidate by ID**
 router.delete("/:id", destroy);
 
 export default router;
