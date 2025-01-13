@@ -52,7 +52,10 @@ export const store = async (req, res) => {
 // Retrieve a single candidate profile by ID
 export const show = async (req, res) => {
   try {
-    const candidate = await CandidateProfile.findById(req.params.id);
+    const { id } = req.user; // Extract userId from the authenticated request
+
+    const candidate = await CandidateProfile.findOne({ userId: id });
+    // const candidate = await CandidateProfile.findById(req.params.id);
     if (!candidate) {
       return sendResponse(res, 404, false, "Candidate profile not found");
     }
