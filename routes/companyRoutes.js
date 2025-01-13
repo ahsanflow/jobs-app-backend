@@ -17,7 +17,7 @@ const router = express.Router();
 router.get("/", authenticate, index);
 
 // Route to fetch logged-in user's company
-router.get("/my", authenticate, getMyCompany);
+// router.get("/my", authenticate, getMyCompany);
 // Get a Single Company by ID**
 router.get("/:id", show);
 
@@ -34,9 +34,9 @@ router.post(
 );
 
 // Update a Company by ID**
-router.put("/:id", update);
+router.put("/", authenticate, update);
 
 // Delete a Company by ID**
-router.delete("/:id", destroy);
+router.delete("/", authenticate, destroy);
 
 export default router;

@@ -73,44 +73,45 @@ export const store = async (req, res) => {
     );
   }
 };
-// Fetch Logged-in User's Company
-export const getMyCompany = async (req, res) => {
-  try {
-    // Extract user ID from the authenticated request
-    const userId = req.user.id;
+// // Fetch Logged-in User's Company
+// export const getMyCompany = async (req, res) => {
+//   try {
+//     // Extract user ID from the authenticated request
+//     const userId = req.user.id;
 
-    // Find the company associated with the user
-    const company = await CompanyProfile.findOne({ userId }).lean();
+//     // Find the company associated with the user
+//     const company = await CompanyProfile.findOne({ userId }).lean();
 
-    if (!company) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Company not found" });
-    }
+//     if (!company) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Company not found" });
+//     }
 
-    // Append domain to logo and cover paths
-    const domain = req.protocol + "://" + req.get("host");
-    const companyWithPaths = appendDomainToPaths(company, domain);
+//     // Append domain to logo and cover paths
+//     const domain = req.protocol + "://" + req.get("host");
+//     const companyWithPaths = appendDomainToPaths(company, domain);
 
-    // Send the response
-    return res.status(200).json({
-      success: true,
-      message: "Company details retrieved successfully",
-      data: companyWithPaths,
-    });
-  } catch (error) {
-    // Handle any errors
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching company details",
-      error: error.message,
-    });
-  }
-};
+//     // Send the response
+//     return res.status(200).json({
+//       success: true,
+//       message: "Company details retrieved successfully",
+//       data: companyWithPaths,
+//     });
+//   } catch (error) {
+//     // Handle any errors
+//     return res.status(500).json({
+//       success: false,
+//       message: "Error fetching company details",
+//       error: error.message,
+//     });
+//   }
+// };
 // Retrieve a single Company profile by ID
 export const show = async (req, res) => {
   try {
-    const company = await CompanyProfile.findById(req.params.id);
+    const { id } = req.user; // Extract userId from the authenticated request
+    const company = await CompanyProfile.findOne({ userId: id });
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
     }
@@ -150,10 +151,10 @@ export const update = async (req, res) => {
     // Add file paths to req.body if they exist
     if (logoPath) req.body.logo = logoPath;
     if (coverPath) req.body.cover = coverPath;
-
+    const { id } = req.user; // Extract userId from the authenticated request
     // Update company profile
-    const company = await CompanyProfile.findByIdAndUpdate(
-      req.params.id,
+    const company = await CompanyProfile.findOneAndUpdate(
+      { userId: id },
       req.body,
       { new: true, runValidators: true }
     );
@@ -189,7 +190,8 @@ export const update = async (req, res) => {
 // Delete a Company profile by ID
 export const destroy = async (req, res) => {
   try {
-    const company = await CompanyProfile.findByIdAndDelete(req.params.id);
+    const { id } = req.user; // Extract userId from the authenticated request
+    const company = await CompanyProfile.findOneAndDelete({ userId: id });
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
     }

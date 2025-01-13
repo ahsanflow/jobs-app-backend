@@ -114,7 +114,8 @@ export const update = async (req, res) => {
 // Delete a candidate profile by ID
 export const destroy = async (req, res) => {
   try {
-    const candidate = await CandidateProfile.findByIdAndDelete(req.params.id);
+    const { id } = req.user; // Extract userId from the authenticated request
+    const candidate = await CandidateProfile.findOneAndDelete({ userId: id });
     if (!candidate) {
       return sendResponse(res, 404, false, "Candidate profile not found");
     }
