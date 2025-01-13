@@ -71,7 +71,7 @@ export const show = async (req, res) => {
       res,
       500,
       false,
-      "Error retrieving candidate profile",
+      "Error retrieving candidate profile.",
       {},
       {},
       error.message
