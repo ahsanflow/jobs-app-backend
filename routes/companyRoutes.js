@@ -34,7 +34,15 @@ router.post(
 );
 
 // Update a Company by ID**
-router.put("/", authenticate, update);
+router.put(
+  "/",
+  upload.fields([
+    { name: "logo", maxCount: 1 },
+    { name: "cover", maxCount: 1 },
+  ]),
+  authenticate,
+  update
+);
 
 // Delete a Company by ID**
 router.delete("/", authenticate, destroy);
