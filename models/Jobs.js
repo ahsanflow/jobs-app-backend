@@ -2,39 +2,27 @@ import mongoose from "mongoose";
 
 const jobsSchema = new mongoose.Schema(
   {
-    jobTitle: { type: String, default: null }, // Backend Developer
-    description: { type: String, default: null }, // Text
-    keyResponsibilities: [{ type: String }], // Array of list items
-    skillExperience: [{ type: String }], // Array of list items
-    hours: { type: String, default: null }, // Working hours
-    image: { type: String, default: null }, // Image URL
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "CompanyProfile", // Reference to CompanyProfile
     },
-    location: {
-      country: { type: String },
-      state: { type: String, default: null },
-      city: { type: String },
-      latitude: { type: String, default: null },
-      longitude: { type: String, default: null },
-    },
+    title: { type: String, default: null }, // Job Title
+    description: { type: String, default: null }, // Job Description
+    specialisms: [{ type: String }], // Array for specialisms (e.g., IT, Marketing)
+    jobType: { type: String, default: null }, // e.g., Full Time, Part Time, Freelance
     salary: {
-      min: { type: Number, default: 0 },
-      max: { type: Number, default: 0 },
+      min: { type: Number, default: 0 }, // Minimum Salary
+      max: { type: Number, default: 0 }, // Maximum Salary
     },
-    jobType: [
-      {
-        styleClass: { type: String }, // e.g., "time"
-        type: { type: String }, // e.g., "Full Time"
-      },
-    ],
-    link: { type: String }, // Job link, e.g., https://segment.com
-    tags: [{ type: String }], // Tags like ["freelance", "android"]
-    category: { type: String }, // Category like IT, Banking
-    expire_at: { type: Date }, // time for expiry
-    experience: { type: String, default: "Fresh" }, // e.g., Fresh, 2-3 years
-    totalSalary: { type: String, default: null }, // Total salary information
+    careerLevel: { type: String, default: null }, // Entry Level, Mid Level, Senior Level
+    experience: { type: String, default: null }, // e.g., Fresh, 2-3 years
+    industry: { type: String, default: null }, // e.g., IT, Healthcare
+    qualification: { type: String, default: null }, // Minimum Qualification (e.g., Bachelor's, Master's)
+    applicationDeadline: { type: Date, default: null }, // Application deadline date
+    location: {
+      country: { type: String, default: null }, // Country of job
+      city: { type: String, default: null }, // City of job
+    },
   },
   { timestamps: true }
 );

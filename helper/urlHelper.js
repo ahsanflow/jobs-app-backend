@@ -18,3 +18,13 @@ export const appendDomainToPaths = (data, domain) => {
   // Handle single company object
   return appendToCompany(data);
 };
+/**
+ * Helper to get the base URL for the uploads directory.
+ *
+ * @param {Object} req - Express request object
+ * @returns {string} - Base URL for the uploads directory
+ */
+export const getUploadsBaseUrl = (req) => {
+  const domain = `${req.protocol}://${req.get("host")}`;
+  return `${domain}/uploads`;
+};

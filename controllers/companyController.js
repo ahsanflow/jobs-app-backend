@@ -1,4 +1,4 @@
-import { appendDomainToPaths } from "../helper/urlHelper.js";
+import { appendDomainToPaths, getUploadsBaseUrl } from "../helper/urlHelper.js";
 import CompanyProfile from "../models/CompanyProfile.js";
 import { sendResponse } from "../utils/response.js";
 
@@ -7,14 +7,12 @@ export const index = async (req, res) => {
   try {
     const companies = await CompanyProfile.find().lean();
 
-    const domain = req.protocol + "://" + req.get("host");
-    const companiesWithFullPaths = appendDomainToPaths(companies, domain);
     sendResponse(
       res,
       200,
       true,
       "Company profiles retrieved successfully",
-      companiesWithFullPaths
+      companies
     );
   } catch (error) {
     sendResponse(
@@ -32,13 +30,14 @@ export const index = async (req, res) => {
 // Create a new Company profile
 export const store = async (req, res) => {
   try {
-    let logoPath = req.files?.logo ? req.files.logo[0].path : null;
-    let coverPath = req.files?.cover ? req.files.cover[0].path : null;
-    logoPath = logoPath
-      ? logoPath.replace("uploads\\", "uploads/") // Save as relative path
+    const uploadsBaseUrl = getUploadsBaseUrl(req);
+
+    const logoPath = req.files?.logo
+      ? `${uploadsBaseUrl}/${req.files.logo[0].filename}`
       : null;
-    coverPath = coverPath
-      ? coverPath.replace("uploads\\", "uploads/") // Save as relative path
+
+    const coverPath = req.files?.cover
+      ? `${uploadsBaseUrl}/${req.files.cover[0].filename}`
       : null;
 
     // Merge file paths into req.body
@@ -51,15 +50,12 @@ export const store = async (req, res) => {
     // Create company profile in the database
     const company = await CompanyProfile.create(companyData);
 
-    const domain = req.protocol + "://" + req.get("host");
-    const companyWithFullPaths = appendDomainToPaths(company.toJSON(), domain);
-
     sendResponse(
       res,
       201,
       true,
       "Company profile created successfully",
-      companyWithFullPaths
+      company
     );
   } catch (error) {
     sendResponse(
@@ -115,15 +111,13 @@ export const show = async (req, res) => {
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
     }
-    const domain = req.protocol + "://" + req.get("host");
-    const companyWithFullPaths = appendDomainToPaths(company.toJSON(), domain);
 
     sendResponse(
       res,
       200,
       true,
       "Company profile retrieved successfully",
-      companyWithFullPaths
+      company
     );
   } catch (error) {
     sendResponse(
@@ -141,12 +135,15 @@ export const show = async (req, res) => {
 // Update a Company profile by ID
 export const update = async (req, res) => {
   try {
-    // Handle file paths for logo and cover
-    let logoPath = req.files?.logo ? req.files.logo[0].path : null;
-    let coverPath = req.files?.cover ? req.files.cover[0].path : null;
+    const uploadsBaseUrl = getUploadsBaseUrl(req);
 
-    logoPath = logoPath ? logoPath.replace("uploads\\", "uploads/") : null;
-    coverPath = coverPath ? coverPath.replace("uploads\\", "uploads/") : null;
+    const logoPath = req.files?.logo
+      ? `${uploadsBaseUrl}/${req.files.logo[0].filename}`
+      : null;
+
+    const coverPath = req.files?.cover
+      ? `${uploadsBaseUrl}/${req.files.cover[0].filename}`
+      : null;
 
     // Add file paths to req.body if they exist
     if (logoPath) req.body.logo = logoPath;
@@ -163,16 +160,12 @@ export const update = async (req, res) => {
       return sendResponse(res, 404, false, "Company profile not found");
     }
 
-    // Append domain to paths
-    const domain = req.protocol + "://" + req.get("host");
-    const companyWithFullPaths = appendDomainToPaths(company.toJSON(), domain);
-
     sendResponse(
       res,
       200,
       true,
       "Company profile updated successfully",
-      companyWithFullPaths
+      company
     );
   } catch (error) {
     sendResponse(
