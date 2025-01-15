@@ -159,14 +159,12 @@ export const update = async (req, res) => {
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
     }
-
-    sendResponse(
-      res,
-      200,
-      true,
-      "Company profile updated successfully",
-      company
-    );
+    const a = req.body;
+    sendResponse(res, 200, true, "Company profile updated successfully", {
+      company,
+      body: a,
+      id,
+    });
   } catch (error) {
     sendResponse(
       res,
