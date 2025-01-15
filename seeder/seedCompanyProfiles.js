@@ -29,7 +29,7 @@ export const seedCompanyProfiles = async (companyUsers) => {
           "Marketing",
         ]),
         allowInSearch: faker.datatype.boolean(),
-        aboutCompany: faker.company.catchPhrase(),
+        description: faker.company.catchPhrase(),
         socialLinks: {
           facebook: faker.internet.url(),
           twitter: faker.internet.url(),

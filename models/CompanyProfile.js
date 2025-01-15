@@ -20,7 +20,7 @@ const companyProfileSchema = new mongoose.Schema(
     country: { type: String, default: null },
     industryType: { type: String, default: null }, // e.g., IT, Banking, etc.
     allowInSearch: { type: Boolean, default: false }, // Visibility in search and listing
-    aboutCompany: { type: String, default: null }, // Description of the company
+    description: { type: String, default: null }, // Description of the company
     socialLinks: {
       facebook: { type: String, default: null },
       twitter: { type: String, default: null },
