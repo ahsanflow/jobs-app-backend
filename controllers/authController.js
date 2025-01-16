@@ -61,32 +61,45 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    // Find the user by email
+    const user = await User.findOne({ email }).exec();
     if (!user) {
       return sendResponse(res, 400, false, "Invalid email or password");
     }
 
+    // Validate the password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return sendResponse(res, 400, false, "Invalid email or password");
     }
 
+    // Conditionally populate based on the user's role
+    let populatedUser;
+    if (user.role === "employer") {
+      populatedUser = await user.populate("companyProfile").execPopulate();
+    } else if (user.role === "candidate") {
+      populatedUser = await user.populate("candidateProfile").execPopulate();
+    }
+
+    // Generate access and refresh tokens
     const accessToken = jwt.sign(
-      { id: user._id, role: user.role },
-      JWT_SECRET,
       {
-        expiresIn: "15m", // Short-lived token
-      }
+        id: user._id,
+        role: user.role,
+        companyId: populatedUser?.companyProfile?._id || null, // Get companyProfile ID if it exists
+        candidateId: populatedUser?.candidateProfile?._id || null, // Get candidateProfile ID if it exists
+      },
+      JWT_SECRET,
+      { expiresIn: "15m" } // Short-lived token
     );
+
     const refreshToken = jwt.sign(
       { id: user._id, role: user.role },
       JWT_SECRET,
-      {
-        expiresIn: "7d", // Long-lived token
-      }
+      { expiresIn: "7d" } // Long-lived token
     );
 
-    // Store refresh token in HTTP-only cookie
+    // Store the refresh token in a secure HTTP-only cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: NODE_ENV === "production",
@@ -94,6 +107,7 @@ export const loginUser = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
+    // Send the response
     sendResponse(res, 200, true, "Login successful", {
       accessToken,
       user: {
@@ -101,12 +115,15 @@ export const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        companyProfile: populatedUser?.companyProfile || null,
+        candidateProfile: populatedUser?.candidateProfile || null,
       },
     });
   } catch (error) {
     sendResponse(res, 500, false, "Error logging in", {}, {}, error.message);
   }
 };
+
 export const logoutUser = (req, res) => {
   try {
     // Clear the token cookie by setting it to an expired date
@@ -145,7 +162,7 @@ export const refreshToken = async (req, res) => {
       const newAccessToken = jwt.sign(
         { id: decoded.id, role: decoded.role },
         JWT_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: "1m" }
       );
 
       sendResponse(res, 200, true, "Access token refreshed successfully", {

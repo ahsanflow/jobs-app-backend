@@ -82,7 +82,21 @@ export const show = async (req, res) => {
 export const store = async (req, res) => {
   try {
     const jobData = req.body;
-
+    // Add the company ID to the job data
+    const jobWithCompanyId = {
+      ...jobData,
+      companyId,
+    };
+    // Extract company ID from the authenticated user
+    const companyId = req.user?.companyId; // Assuming companyId is stored in req.user
+    if (!companyId) {
+      return sendResponse(
+        res,
+        400,
+        false,
+        "Company ID is required but not provided in the request"
+      );
+    }
     const job = await Jobs.create(jobData);
 
     sendResponse(res, 201, true, "Job created successfully", job);

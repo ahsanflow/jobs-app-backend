@@ -18,7 +18,7 @@ router.get("/", index);
 router.get("/:id", show);
 
 // Create a Job**
-router.post("/", store);
+router.post("/", authenticate, store);
 
 // Update a Job by ID**
 router.put("/:id", update);
