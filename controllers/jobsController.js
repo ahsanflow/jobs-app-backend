@@ -20,7 +20,7 @@ export const index = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .sort(sort)
-      .populate("company", "companyName email phone website")
+      .populate("company", "companyName email phone website logo")
       .exec();
 
     // Total count

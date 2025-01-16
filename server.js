@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js"; // ES module import
 import jobsRoutes from "./routes/jobsRoutes.js"; // ES module import
 import cors from "cors"; // Import cors
 import { FRONTEND_URL, PORT, UPLOAD_DIR } from "./config/index.js";
+import cookieParser from "cookie-parser";
 // CORS configuration
 
 dotenv.config();
@@ -18,7 +19,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
-
+app.use(cookieParser());
 app.use(cors(corsOptions)); // Enable CORS with the options
 
 // Middleware for JSON body parsing

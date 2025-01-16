@@ -6,6 +6,10 @@ import bcrypt from "bcrypt";
 import { JWT_SECRET, NODE_ENV } from "../config/index.js";
 import CompanyProfile from "../models/CompanyProfile.js";
 import CandidateProfile from "../models/CandidateProfile.js";
+
+const accessTokenExpireIn = "15m";
+const refreshTokenExpireIn = "15d";
+
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -76,9 +80,9 @@ export const loginUser = async (req, res) => {
     // Conditionally populate based on the user's role
     let populatedUser;
     if (user.role === "employer") {
-      populatedUser = await user.populate("companyProfile").execPopulate();
+      populatedUser = await user.populate("companyProfile");
     } else if (user.role === "candidate") {
-      populatedUser = await user.populate("candidateProfile").execPopulate();
+      populatedUser = await user.populate("candidateProfile");
     }
 
     // Generate access and refresh tokens
@@ -86,17 +90,22 @@ export const loginUser = async (req, res) => {
       {
         id: user._id,
         role: user.role,
-        companyId: populatedUser?.companyProfile?._id || null, // Get companyProfile ID if it exists
-        candidateId: populatedUser?.candidateProfile?._id || null, // Get candidateProfile ID if it exists
+        companyId: populatedUser?.companyProfile?._id || null,
+        candidateId: populatedUser?.candidateProfile?._id || null,
       },
       JWT_SECRET,
-      { expiresIn: "15m" } // Short-lived token
+      { expiresIn: accessTokenExpireIn } // Short-lived token
     );
 
     const refreshToken = jwt.sign(
-      { id: user._id, role: user.role },
+      {
+        id: user._id,
+        role: user.role,
+        companyId: populatedUser?.companyProfile?._id || null,
+        candidateId: populatedUser?.candidateProfile?._id || null,
+      },
       JWT_SECRET,
-      { expiresIn: "7d" } // Long-lived token
+      { expiresIn: refreshTokenExpireIn } // Long-lived token
     );
 
     // Store the refresh token in a secure HTTP-only cookie
@@ -104,7 +113,7 @@ export const loginUser = async (req, res) => {
       httpOnly: true,
       secure: NODE_ENV === "production",
       sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     // Send the response
@@ -141,7 +150,8 @@ export const logoutUser = (req, res) => {
 };
 export const refreshToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshToken;
+    console.log(req.cookie);
+    const refreshToken = req.cookies?.refreshToken;
 
     if (!refreshToken) {
       return sendResponse(res, 400, false, "Refresh token is required");
@@ -160,9 +170,14 @@ export const refreshToken = async (req, res) => {
 
       // Generate a new access token
       const newAccessToken = jwt.sign(
-        { id: decoded.id, role: decoded.role },
+        {
+          id: decoded.id,
+          role: decoded.role,
+          companyId: decoded.companyId,
+          candidateId: decoded.candidateId,
+        },
         JWT_SECRET,
-        { expiresIn: "1m" }
+        { expiresIn: accessTokenExpireIn }
       );
 
       sendResponse(res, 200, true, "Access token refreshed successfully", {
