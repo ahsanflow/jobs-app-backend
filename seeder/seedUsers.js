@@ -19,11 +19,11 @@ export const seedUsers = async (count = 10) => {
       name: "Pr1me",
       email: "company@company.com",
       password: password,
-      role: "employer",
+      role: "company",
     });
     for (let i = 0; i < count; i++) {
       const password = await bcrypt.hash("password123", i);
-      const role = faker.helpers.arrayElement(["employer", "candidate"]);
+      const role = faker.helpers.arrayElement(["company", "candidate"]);
       users.push({
         name: faker.person.fullName(),
         email: faker.internet.email(),

@@ -5,7 +5,7 @@ import {
   show,
   update,
   destroy,
-  // getMyCompany,
+  getMyCompany,
 } from "../controllers/companyController.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import { validateCompanyProfile } from "../validators/companyProfileValidator.js";
@@ -16,14 +16,15 @@ const router = express.Router();
 // Get All Companies (with Pagination)**
 router.get("/", index);
 
-// Route to fetch logged-in user's company
-// router.get("/my", authenticate, getMyCompany);
+// Route to fetch logged-in user's company Profile
+router.get("/me", authenticate, getMyCompany);
 // Get a Single Company by ID**
 router.get("/:id", show);
 
 // Create a Company**
 router.post(
   "/",
+  authenticate,
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "cover", maxCount: 1 },
@@ -36,11 +37,11 @@ router.post(
 // Update a Company by ID**
 router.put(
   "/",
+  authenticate,
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "cover", maxCount: 1 },
   ]),
-  authenticate,
   update
 );
 

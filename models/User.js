@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
+const UserRole = ["admin", "candidate", "company"];
+
 const userSchema = new mongoose.Schema(
   {
     name: { type: String },
@@ -8,17 +10,13 @@ const userSchema = new mongoose.Schema(
     password: { type: String, default: null },
     role: {
       type: String,
-      enum: ["admin", "candidate", "employer"],
+      enum: UserRole,
       default: "candidate",
     },
-    companyProfile: {
+    profile: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CompanyProfile",
-    }, // Null for candidates
-    candidateProfile: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "CandidateProfile",
-    }, // Null for companies
+      refPath: "role", // Dynamically set the ref to the correct profile based on the role
+    },
   },
   { timestamps: true }
 );
