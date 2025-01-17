@@ -14,12 +14,12 @@ import { authenticate } from "../middleware/auth.js";
 const router = express.Router();
 
 // Get All Companies (with Pagination)**
-router.get("/", authenticate, index);
+router.get("/", index);
 
 // Route to fetch logged-in user's company
 // router.get("/my", authenticate, getMyCompany);
 // Get a Single Company by ID**
-router.get("/:id", authenticate, show);
+router.get("/:id", show);
 
 // Create a Company**
 router.post(
