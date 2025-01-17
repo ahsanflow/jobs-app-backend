@@ -1,6 +1,38 @@
 import Jobs from "../models/Jobs.js";
 import { faker } from "@faker-js/faker";
-
+const skills = [
+  "JavaScript",
+  "Python",
+  "Java",
+  "C#",
+  "PHP",
+  "React",
+  "Angular",
+  "Vue.js",
+  "Node.js",
+  "Django",
+  "Flask",
+  "Laravel",
+  "Spring Boot",
+  "Ruby on Rails",
+  "SQL",
+  "MongoDB",
+  "AWS",
+  "Azure",
+  "DevOps",
+  "Docker",
+  "Kubernetes",
+  "Machine Learning",
+  "Data Science",
+  "Cybersecurity",
+  "UI/UX Design",
+  "Figma",
+  "Adobe XD",
+  "SEO",
+  "Marketing",
+  "Project Management",
+  "Scrum",
+];
 export const seedJobs = async (companyIds, count = 10) => {
   try {
     console.log("Seeding Jobs...");
@@ -16,6 +48,10 @@ export const seedJobs = async (companyIds, count = 10) => {
           ["IT", "Healthcare", "Finance", "Marketing"],
           2
         ),
+        skills: faker.helpers.arrayElements(
+          skills,
+          faker.number.int({ min: 3, max: 7 })
+        ), // Select 3-7 random skills
         jobType: faker.helpers.arrayElement([
           "Full Time",
           "Part Time",
@@ -53,6 +89,10 @@ export const seedJobs = async (companyIds, count = 10) => {
           country: faker.location.country(),
           city: faker.location.city(),
         },
+        deadline: new Date(
+          Date.now() +
+            faker.number.int({ min: 7, max: 30 }) * 24 * 60 * 60 * 1000
+        ),
       });
       data.push(job);
     }

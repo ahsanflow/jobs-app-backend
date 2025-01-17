@@ -82,13 +82,16 @@ export const show = async (req, res) => {
 export const store = async (req, res) => {
   try {
     const jobData = req.body;
+    const formattedDeadline = moment(jobData.deadline, "MM/DD/YYYY").toDate();
+
+    // Extract company ID from the authenticated user
+    const companyId = req.user?.companyId; // Assuming companyId is stored in req.user
     // Add the company ID to the job data
     const jobWithCompanyId = {
       ...jobData,
       companyId,
+      deadline: formattedDeadline,
     };
-    // Extract company ID from the authenticated user
-    const companyId = req.user?.companyId; // Assuming companyId is stored in req.user
     if (!companyId) {
       return sendResponse(
         res,
@@ -97,7 +100,7 @@ export const store = async (req, res) => {
         "Company ID is required but not provided in the request"
       );
     }
-    const job = await Jobs.create(jobData);
+    const job = await Jobs.create(jobWithCompanyId);
 
     sendResponse(res, 201, true, "Job created successfully", job);
   } catch (error) {
