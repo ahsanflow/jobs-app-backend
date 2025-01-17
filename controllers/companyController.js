@@ -106,8 +106,8 @@ export const store = async (req, res) => {
 // Retrieve a single Company profile by ID
 export const show = async (req, res) => {
   try {
-    const { id } = req.user; // Extract userId from the authenticated request
-    const company = await CompanyProfile.findOne({ userId: id });
+    const { id } = req.params; // Extract userId from the authenticated request
+    const company = await CompanyProfile.findById(id);
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
     }
