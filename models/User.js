@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-const UserRole = ["admin", "candidate", "company"];
+const UserRole = ["admin", "Candidate", "Company"];
 
 const userSchema = new mongoose.Schema(
   {
@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: UserRole,
-      default: "candidate",
+      default: "Candidate",
     },
     profile: {
       type: mongoose.Schema.Types.ObjectId,

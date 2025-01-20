@@ -14,7 +14,7 @@ const seedAllData = async () => {
     const users = await seedUsers(10);
 
     // Seed Company Profiles
-    const companyUsers = users.filter((user) => user.role === "company");
+    const companyUsers = users.filter((user) => user.role === "Company");
     const companies = await seedCompanies(companyUsers);
 
     // Seed Jobs
@@ -24,7 +24,7 @@ const seedAllData = async () => {
     );
 
     // Seed Candidate Profiles
-    const candidateUsers = users.filter((user) => user.role === "candidate");
+    const candidateUsers = users.filter((user) => user.role === "Candidate");
     const candidates = await seedCandidates(candidateUsers);
 
     // Seed Job Applications

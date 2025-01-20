@@ -5,7 +5,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { JWT_SECRET, NODE_ENV } from "../config/index.js";
 import Company from "../models/Company.js";
-import candidate from "../models/Candidate.js";
+import Candidate from "../models/Candidate.js";
 
 const accessTokenExpireIn = "15m";
 const refreshTokenExpireIn = "15d";
@@ -20,32 +20,41 @@ export const registerUser = async (req, res) => {
       return sendResponse(res, 400, false, "User already exists");
     }
 
+    // Capitalize the first letter of the role to match your schema
+    const capitalizedRole =
+      role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+
     // Create a new user
-    const user = new User({ name, email, password, role });
+    const user = new User({ name, email, password, role: capitalizedRole });
     await user.save();
-    // Now, create corresponding profiles based on the role
-    if (role === "company") {
+
+    // Create corresponding profiles based on the role
+    let profileData;
+    if (capitalizedRole === "Company") {
       // Create Company Profile
-      const company = await Company.create({
+      profileData = await Company.create({
         userId: user._id,
         email: email, // Add other fields as needed
       });
-      user.company = company._id; // Link the profile to the user
-    } else if (role === "candidate") {
+    } else if (capitalizedRole === "Candidate") {
       // Create Candidate Profile
-      const candidate = await candidate.create({
+      profileData = await Candidate.create({
         userId: user._id,
-        email: user.email,
+        email: email,
       });
-      user.candidate = candidate._id; // Link the profile to the user
     }
+
+    // Link the profile to the user using profileId
+    user.profile = profileData._id; // Use profileId to link
     await user.save();
+
     sendResponse(res, 201, true, "User registered successfully", {
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+        profileId: user.profile, // Return profileId instead of profile details
       },
     });
   } catch (error) {
@@ -68,6 +77,10 @@ export const loginUser = async (req, res) => {
     // Validate input
     if (!email || !password) {
       return sendResponse(res, 400, false, "Email and password are required");
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return sendResponse(res, 400, false, "Invalid email format");
     }
     // Find the user by email
     const user = await User.findOne({ email }).populate("profile");
@@ -114,7 +127,16 @@ export const loginUser = async (req, res) => {
       },
     });
   } catch (error) {
-    sendResponse(res, 500, false, "Error logging in", {}, {}, error.message);
+    console.error(error);
+    sendResponse(
+      res,
+      500,
+      false,
+      "Error logging in",
+      { error },
+      {},
+      error.message
+    );
   }
 };
 
