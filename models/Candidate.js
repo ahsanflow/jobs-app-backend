@@ -26,4 +26,4 @@ const candidateSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Candidate", candidateSchema);
+export default mongoose.model("candidate", candidateSchema);
