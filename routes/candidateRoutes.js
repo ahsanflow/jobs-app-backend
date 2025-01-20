@@ -5,6 +5,7 @@ import {
   show,
   update,
   destroy,
+  getMyProfile,
 } from "../controllers/candidateController.js";
 import { authenticate } from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
@@ -14,7 +15,7 @@ const router = express.Router();
 router.get("/", index);
 
 //  Route to fetch logged-in user's candidate profile
-router.get("/me", authenticate, show);
+router.get("/me", authenticate, getMyProfile);
 
 // Get a Single candidate by ID**
 router.get("/:id", show);

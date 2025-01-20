@@ -73,30 +73,34 @@ export const store = async (req, res) => {
 export const getMyCompany = async (req, res) => {
   try {
     // Extract user ID from the authenticated request
-    const userId = req.user.id;
+    const userId = req.user.profileId;
 
     // Find the company associated with the user
-    const company = await Company.findOne({ userId }).lean();
+    const data = await Company.findById(userId).lean();
 
     if (!company) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Company not found" });
+      return sendResponse(res, 404, false, "Company profile not found");
     }
 
     // Send the response
-    return res.status(200).json({
-      success: true,
-      message: "Company details retrieved successfully",
-      data: company,
-    });
+    return sendResponse(
+      res,
+      200,
+      true,
+      "Company details retrieved successfully",
+      data
+    );
   } catch (error) {
     // Handle any errors
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching company details",
-      error: error.message,
-    });
+    sendResponse(
+      res,
+      500,
+      false,
+      "Error fetching company details",
+      {},
+      {},
+      error.message
+    );
   }
 };
 // Retrieve a single Company profile by ID

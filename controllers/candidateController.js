@@ -61,14 +61,47 @@ export const store = async (req, res) => {
   }
 };
 
+// // Fetch Logged-in User's Profile
+export const getMyProfile = async (req, res) => {
+  try {
+    // Extract user ID from the authenticated request
+    const userId = req.user.profileId;
+
+    // Find the candidate associated with the user
+    const data = await candidate.findById(userId).lean();
+
+    if (!data) {
+      return sendResponse(res, 404, false, "Candidate not found", userId);
+    }
+
+    // Send the response
+    return sendResponse(
+      res,
+      200,
+      true,
+      "Candidate details retrieved successfully",
+      data
+    );
+  } catch (error) {
+    // Handle any errors
+    sendResponse(
+      res,
+      500,
+      false,
+      "Error fetching candidate details",
+      {},
+      {},
+      error.message
+    );
+  }
+};
 // Retrieve a single candidate profile by ID
 export const show = async (req, res) => {
   try {
-    const { id } = req.user; // Extract userId from the authenticated request
-
-    const candidate = await candidate.findOne({ userId: id });
+    const { id } = req.params;
+    const data = await candidate.findById(id);
     // const candidate = await candidate.findById(req.params.id);
-    if (!candidate) {
+    if (!data) {
       return sendResponse(res, 404, false, "Candidate profile not found");
     }
     sendResponse(
@@ -76,7 +109,7 @@ export const show = async (req, res) => {
       200,
       true,
       "Candidate profile retrieved successfully",
-      candidate
+      data
     );
   } catch (error) {
     sendResponse(
