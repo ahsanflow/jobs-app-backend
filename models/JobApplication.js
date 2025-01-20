@@ -4,7 +4,7 @@ const jobApplicationSchema = new mongoose.Schema(
   {
     candidate: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CandidateProfile", // Reference to the candidate
+      ref: "candidate", // Reference to the candidate
       required: true,
     },
     job: {

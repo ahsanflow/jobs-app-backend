@@ -1,14 +1,14 @@
-import CandidateProfile from "../models/CandidateProfile.js";
+import Candidate from "../models/Candidate.js";
 import { faker } from "@faker-js/faker";
 
-export const seedCandidateProfiles = async (candidateUsers) => {
+export const seedCandidates = async (candidateUsers) => {
   try {
     console.log("Seeding Candidate Profiles...");
-    await CandidateProfile.deleteMany({});
-    const candidateProfiles = [];
+    await Candidate.deleteMany({});
+    const createdCandidates = [];
     for (const user of candidateUsers) {
       const uname = faker.person.fullName();
-      const candidateProfile = await CandidateProfile.create({
+      const createdCandidate = await Candidate.create({
         userId: user._id,
         fullName: uname,
         image: `https://placehold.co/800x800/eeeeee/31343c/webp?text=${uname}`,
@@ -37,13 +37,13 @@ export const seedCandidateProfiles = async (candidateUsers) => {
         description: faker.lorem.paragraph(),
       });
       // Update the user with the candidate profile reference
-      user.profile = candidateProfile._id;
+      user.profile = createdCandidate._id;
       await user.save();
-      candidateProfiles.push(candidateProfile);
+      createdCandidates.push(createdCandidate);
     }
 
     console.log("Candidate Profiles seeded!");
-    return candidateProfiles;
+    return createdCandidates;
   } catch (error) {
     console.error("Error seeding Candidate Profiles:", error);
     throw error;

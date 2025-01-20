@@ -4,7 +4,7 @@ const jobsSchema = new mongoose.Schema(
   {
     company: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CompanyProfile", // Reference to CompanyProfile
+      ref: "Company", // Reference to Company
     },
     title: { type: String, default: null }, // Job Title
     description: { type: String, default: null }, // Job Description

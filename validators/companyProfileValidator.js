@@ -21,7 +21,7 @@ const validateSocialLinks = [
 ];
 
 // Main Company Profile Validation
-export const validateCompanyProfile = [
+export const validateCompany = [
   // Logo and Cover
   body("logo").optional().isString().withMessage("Logo must be a string."),
   body("cover").optional().isString().withMessage("Cover must be a string."),

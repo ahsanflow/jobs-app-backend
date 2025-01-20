@@ -1,11 +1,11 @@
 import { appendDomainToPaths, getUploadsBaseUrl } from "../helper/urlHelper.js";
-import CompanyProfile from "../models/CompanyProfile.js";
+import Company from "../models/Company.js";
 import { sendResponse } from "../utils/response.js";
 
 // Retrieve all Company profiles
 export const index = async (req, res) => {
   try {
-    const companies = await CompanyProfile.find().lean();
+    const companies = await Company.find().lean();
 
     sendResponse(
       res,
@@ -48,7 +48,7 @@ export const store = async (req, res) => {
     };
 
     // Create company profile in the database
-    const company = await CompanyProfile.create(companyData);
+    const company = await Company.create(companyData);
 
     sendResponse(
       res,
@@ -76,7 +76,7 @@ export const getMyCompany = async (req, res) => {
     const userId = req.user.id;
 
     // Find the company associated with the user
-    const company = await CompanyProfile.findOne({ userId }).lean();
+    const company = await Company.findOne({ userId }).lean();
 
     if (!company) {
       return res
@@ -103,7 +103,7 @@ export const getMyCompany = async (req, res) => {
 export const show = async (req, res) => {
   try {
     const { id } = req.params; // Extract userId from the authenticated request
-    const company = await CompanyProfile.findById(id);
+    const company = await Company.findById(id);
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
     }
@@ -146,11 +146,10 @@ export const update = async (req, res) => {
     if (coverPath) req.body.cover = coverPath;
     const { id } = req.user; // Extract userId from the authenticated request
     // Update company profile
-    const company = await CompanyProfile.findOneAndUpdate(
-      { userId: id },
-      req.body,
-      { new: true, runValidators: true }
-    );
+    const company = await Company.findOneAndUpdate({ userId: id }, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
@@ -178,7 +177,7 @@ export const update = async (req, res) => {
 export const destroy = async (req, res) => {
   try {
     const { id } = req.user; // Extract userId from the authenticated request
-    const company = await CompanyProfile.findOneAndDelete({ userId: id });
+    const company = await Company.findOneAndDelete({ userId: id });
     if (!company) {
       return sendResponse(res, 404, false, "Company profile not found");
     }

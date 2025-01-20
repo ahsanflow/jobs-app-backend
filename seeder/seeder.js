@@ -1,7 +1,7 @@
 import { connectDB } from "../config/database.js";
 import { seedUsers } from "./seedUsers.js";
-import { seedCompanyProfiles } from "./seedCompanyProfiles.js";
-import { seedCandidateProfiles } from "./seedCandidateProfiles.js";
+import { seedCompanies } from "./seedCompanies.js";
+import { seedCandidates } from "./seedCandidates.js";
 import { seedJobs } from "./seedJobs.js";
 import { seedJobApplications } from "./seedJobApplications.js";
 
@@ -15,7 +15,7 @@ const seedAllData = async () => {
 
     // Seed Company Profiles
     const companyUsers = users.filter((user) => user.role === "company");
-    const companies = await seedCompanyProfiles(companyUsers);
+    const companies = await seedCompanies(companyUsers);
 
     // Seed Jobs
     const jobs = await seedJobs(
@@ -25,7 +25,7 @@ const seedAllData = async () => {
 
     // Seed Candidate Profiles
     const candidateUsers = users.filter((user) => user.role === "candidate");
-    const candidates = await seedCandidateProfiles(candidateUsers);
+    const candidates = await seedCandidates(candidateUsers);
 
     // Seed Job Applications
     await seedJobApplications(

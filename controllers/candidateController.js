@@ -1,11 +1,11 @@
 import { getUploadsBaseUrl } from "../helper/urlHelper.js";
-import CandidateProfile from "../models/CandidateProfile.js";
+import candidate from "../models/Candidate.js";
 import { sendResponse } from "../utils/response.js";
 
 // Retrieve all candidate profiles
 export const index = async (req, res) => {
   try {
-    const candidates = await CandidateProfile.find();
+    const candidates = await candidate.find();
     sendResponse(
       res,
       200,
@@ -40,7 +40,7 @@ export const store = async (req, res) => {
       ...req.body,
       image: imagePath,
     };
-    const candidate = await CandidateProfile.create(candidateData);
+    const candidate = await candidate.create(candidateData);
     sendResponse(
       res,
       201,
@@ -66,8 +66,8 @@ export const show = async (req, res) => {
   try {
     const { id } = req.user; // Extract userId from the authenticated request
 
-    const candidate = await CandidateProfile.findOne({ userId: id });
-    // const candidate = await CandidateProfile.findById(req.params.id);
+    const candidate = await candidate.findOne({ userId: id });
+    // const candidate = await candidate.findById(req.params.id);
     if (!candidate) {
       return sendResponse(res, 404, false, "Candidate profile not found");
     }
@@ -95,7 +95,7 @@ export const show = async (req, res) => {
 export const update = async (req, res) => {
   try {
     const { id } = req.user; // Extract userId from the authenticated request
-    const candidate = await CandidateProfile.findOneAndUpdate(
+    const candidate = await candidate.findOneAndUpdate(
       { userId: id },
       req.body,
       { new: true, runValidators: true }
@@ -127,7 +127,7 @@ export const update = async (req, res) => {
 export const destroy = async (req, res) => {
   try {
     const { id } = req.user; // Extract userId from the authenticated request
-    const candidate = await CandidateProfile.findOneAndDelete({ userId: id });
+    const candidate = await candidate.findOneAndDelete({ userId: id });
     if (!candidate) {
       return sendResponse(res, 404, false, "Candidate profile not found");
     }

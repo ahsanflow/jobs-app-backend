@@ -8,7 +8,7 @@ export const registerValidation = [
   body("role")
     .notEmpty()
     .withMessage("Role is required")
-    .isIn(["admin", "candidate", "employer"])
+    .isIn(["admin", "candidate", "company"])
     .withMessage("Invalid or no role specified"),
 ];
 

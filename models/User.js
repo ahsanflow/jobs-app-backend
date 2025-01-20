@@ -33,11 +33,11 @@ userSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
 userSchema.pre("remove", async function (next) {
-  if (this.candidateProfile) {
-    await CandidateProfile.findByIdAndDelete(this.candidateProfile);
+  if (this.candidate) {
+    await candidate.findByIdAndDelete(this.candidate);
   }
-  if (this.companyProfile) {
-    await CompanyProfile.findByIdAndDelete(this.companyProfile);
+  if (this.company) {
+    await Company.findByIdAndDelete(this.company);
   }
   next();
 });

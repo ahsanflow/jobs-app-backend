@@ -1,15 +1,15 @@
-import CompanyProfile from "../models/CompanyProfile.js";
+import Company from "../models/Company.js";
 import { faker } from "@faker-js/faker";
 
-export const seedCompanyProfiles = async (companyUsers) => {
+export const seedCompanies = async (companyUsers) => {
   try {
     console.log("Seeding Company Profiles...");
-    await CompanyProfile.deleteMany({});
-    const companyProfiles = [];
+    await Company.deleteMany({});
+    const createdCompanies = [];
 
     for (const user of companyUsers) {
       const cname = faker.company.name();
-      const companyProfile = await CompanyProfile.create({
+      const createdCompany = await Company.create({
         userId: user._id,
         companyName: cname,
         logo: `https://placehold.co/250x250/eeeeee/31343c/webp?text=${cname}`,
@@ -38,13 +38,13 @@ export const seedCompanyProfiles = async (companyUsers) => {
         },
       });
       // Update the user with the company profile reference
-      user.profile = companyProfile._id;
+      user.profile = createdCompany._id;
       await user.save();
-      companyProfiles.push(companyProfile);
+      createdCompanies.push(createdCompany);
     }
 
     console.log("Company Profiles seeded!");
-    return companyProfiles;
+    return createdCompanies;
   } catch (error) {
     console.error("Error seeding Company Profiles:", error);
     throw error;

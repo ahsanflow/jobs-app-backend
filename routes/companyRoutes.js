@@ -8,7 +8,7 @@ import {
   getMyCompany,
 } from "../controllers/companyController.js";
 import { validateRequest } from "../middleware/validateRequest.js";
-import { validateCompanyProfile } from "../validators/companyProfileValidator.js";
+import { validateCompany } from "../validators/companyValidator.js";
 import upload from "../middleware/upload.js";
 import { authenticate } from "../middleware/auth.js";
 const router = express.Router();
@@ -29,7 +29,7 @@ router.post(
     { name: "logo", maxCount: 1 },
     { name: "cover", maxCount: 1 },
   ]),
-  validateCompanyProfile,
+  validateCompany,
   validateRequest,
   store
 );

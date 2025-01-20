@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const companyProfileSchema = new mongoose.Schema(
+const companySchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -31,4 +31,4 @@ const companyProfileSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("CompanyProfile", companyProfileSchema);
+export default mongoose.model("Company", companySchema);
