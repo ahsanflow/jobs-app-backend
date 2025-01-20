@@ -7,9 +7,11 @@ export const seedCandidateProfiles = async (candidateUsers) => {
     await CandidateProfile.deleteMany({});
     const candidateProfiles = [];
     for (const user of candidateUsers) {
+      const uname = faker.person.fullName();
       const candidateProfile = await CandidateProfile.create({
         userId: user._id,
-        fullName: faker.person.fullName(),
+        fullName: uname,
+        image: `https://placehold.co/800x800/eeeeee/31343c/webp?text=${uname}`,
         jobTitle: faker.person.jobTitle(),
         phone: faker.phone.number(),
         email: user.email,
@@ -35,7 +37,7 @@ export const seedCandidateProfiles = async (candidateUsers) => {
         description: faker.lorem.paragraph(),
       });
       // Update the user with the candidate profile reference
-      user.candidateProfile = candidateProfile._id;
+      user.profile = candidateProfile._id;
       await user.save();
       candidateProfiles.push(candidateProfile);
     }

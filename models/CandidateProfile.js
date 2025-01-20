@@ -8,6 +8,7 @@ const candidateProfileSchema = new mongoose.Schema(
       default: null,
     },
     fullName: { type: String, default: null },
+    image: { type: String, default: null },
     jobTitle: { type: String, default: null },
     phone: { type: String, default: null },
     email: { type: String, default: null },

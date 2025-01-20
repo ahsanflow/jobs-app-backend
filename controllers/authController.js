@@ -65,10 +65,14 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Validate input
+    if (!email || !password) {
+      return sendResponse(res, 400, false, "Email and password are required");
+    }
     // Find the user by email
-    const user = await User.findOne({ email }).exec();
+    const user = await User.findOne({ email }).populate("profile");
     if (!user) {
-      return sendResponse(res, 400, false, "Invalid email or password");
+      return sendResponse(res, 400, false, "This user is not registered");
     }
 
     // Validate the password
@@ -76,37 +80,19 @@ export const loginUser = async (req, res) => {
     if (!isMatch) {
       return sendResponse(res, 400, false, "Invalid email or password");
     }
-
-    // Conditionally populate based on the user's role
-    let populatedUser;
-    if (user.role === "employer") {
-      populatedUser = await user.populate("companyProfile");
-    } else if (user.role === "candidate") {
-      populatedUser = await user.populate("candidateProfile");
-    }
-
+    // JWT Payload
+    const tokenPayload = {
+      id: user._id,
+      role: user.role,
+      profileId: user.profile?._id,
+    };
     // Generate access and refresh tokens
-    const accessToken = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-        companyId: populatedUser?.companyProfile?._id || null,
-        candidateId: populatedUser?.candidateProfile?._id || null,
-      },
-      JWT_SECRET,
-      { expiresIn: accessTokenExpireIn } // Short-lived token
-    );
-
-    const refreshToken = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-        companyId: populatedUser?.companyProfile?._id || null,
-        candidateId: populatedUser?.candidateProfile?._id || null,
-      },
-      JWT_SECRET,
-      { expiresIn: refreshTokenExpireIn } // Long-lived token
-    );
+    const accessToken = jwt.sign(tokenPayload, JWT_SECRET, {
+      expiresIn: accessTokenExpireIn,
+    });
+    const refreshToken = jwt.sign(tokenPayload, JWT_SECRET, {
+      expiresIn: refreshTokenExpireIn,
+    });
 
     // Store the refresh token in a secure HTTP-only cookie
     res.cookie("refreshToken", refreshToken, {
@@ -124,8 +110,7 @@ export const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        companyProfile: populatedUser?.companyProfile || null,
-        candidateProfile: populatedUser?.candidateProfile || null,
+        profileId: user.profile?._id,
       },
     });
   } catch (error) {
@@ -173,8 +158,7 @@ export const refreshToken = async (req, res) => {
         {
           id: decoded.id,
           role: decoded.role,
-          companyId: decoded.companyId,
-          candidateId: decoded.candidateId,
+          profileId: decoded.profileId,
         },
         JWT_SECRET,
         { expiresIn: accessTokenExpireIn }

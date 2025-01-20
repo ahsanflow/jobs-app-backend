@@ -1,3 +1,4 @@
+import { getUploadsBaseUrl } from "../helper/urlHelper.js";
 import CandidateProfile from "../models/CandidateProfile.js";
 import { sendResponse } from "../utils/response.js";
 
@@ -28,7 +29,18 @@ export const index = async (req, res) => {
 // Create a new candidate profile
 export const store = async (req, res) => {
   try {
-    const candidate = await CandidateProfile.create(req.body);
+    const uploadsBaseUrl = getUploadsBaseUrl(req);
+
+    const imagePath = req.files?.image
+      ? `${uploadsBaseUrl}/${req.files.image[0].filename}`
+      : null;
+
+    // Merge file paths into req.body
+    const candidateData = {
+      ...req.body,
+      image: imagePath,
+    };
+    const candidate = await CandidateProfile.create(candidateData);
     sendResponse(
       res,
       201,

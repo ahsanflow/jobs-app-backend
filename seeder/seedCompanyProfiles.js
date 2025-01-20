@@ -38,7 +38,7 @@ export const seedCompanyProfiles = async (companyUsers) => {
         },
       });
       // Update the user with the company profile reference
-      user.companyProfile = companyProfile._id;
+      user.profile = companyProfile._id;
       await user.save();
       companyProfiles.push(companyProfile);
     }
