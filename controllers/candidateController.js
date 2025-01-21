@@ -40,13 +40,13 @@ export const store = async (req, res) => {
       ...req.body,
       image: imagePath,
     };
-    const candidate = await candidate.create(candidateData);
+    const data = await candidate.create(candidateData);
     sendResponse(
       res,
       201,
       true,
       "Candidate profile created successfully",
-      candidate
+      data
     );
   } catch (error) {
     sendResponse(
