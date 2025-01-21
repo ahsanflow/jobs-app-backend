@@ -78,7 +78,7 @@ export const getMyCompany = async (req, res) => {
     // Find the company associated with the user
     const data = await Company.findById(userId).lean();
 
-    if (!company) {
+    if (!data) {
       return sendResponse(res, 404, false, "Company profile not found");
     }
 
@@ -148,22 +148,19 @@ export const update = async (req, res) => {
     // Add file paths to req.body if they exist
     if (logoPath) req.body.logo = logoPath;
     if (coverPath) req.body.cover = coverPath;
-    const { id } = req.user; // Extract userId from the authenticated request
+    const userId = req.user.profileId;
+
     // Update company profile
-    const company = await Company.findOneAndUpdate({ userId: id }, req.body, {
+    const data = await Company.findOneAndUpdate({ userId: userId }, req.body, {
       new: true,
       runValidators: true,
     });
 
-    if (!company) {
+    if (!data) {
       return sendResponse(res, 404, false, "Company profile not found");
     }
-    const a = req.body;
-    sendResponse(res, 200, true, "Company profile updated successfully", {
-      company,
-      body: a,
-      id,
-    });
+
+    sendResponse(res, 200, true, "Company profile updated successfully", data);
   } catch (error) {
     sendResponse(
       res,
