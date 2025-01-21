@@ -148,10 +148,10 @@ export const update = async (req, res) => {
     // Add file paths to req.body if they exist
     if (logoPath) req.body.logo = logoPath;
     if (coverPath) req.body.cover = coverPath;
-    const userId = req.user.profileId;
+    const id = req.user.profileId;
 
     // Update company profile
-    const data = await Company.findOneAndUpdate({ userId: userId }, req.body, {
+    const data = await Company.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
