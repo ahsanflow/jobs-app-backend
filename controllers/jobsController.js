@@ -1,6 +1,7 @@
 import Jobs from "../models/Jobs.js";
 import { sendResponse } from "../utils/response.js";
 import { getPagination } from "../utils/pagination.js";
+import moment from "moment";
 
 // **1. Get All Jobs (with Pagination)**
 export const index = async (req, res) => {
@@ -85,7 +86,7 @@ export const store = async (req, res) => {
     const formattedDeadline = moment(jobData.deadline, "MM/DD/YYYY").toDate();
 
     // Extract company ID from the authenticated user
-    const companyId = req.user?.companyId; // Assuming companyId is stored in req.user
+    const companyId = req.user?.profileId; // Assuming companyId is stored in req.user
     // Add the company ID to the job data
     const jobWithCompanyId = {
       ...jobData,

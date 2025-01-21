@@ -7,7 +7,7 @@ import { JWT_SECRET, NODE_ENV } from "../config/index.js";
 import Company from "../models/Company.js";
 import Candidate from "../models/Candidate.js";
 
-const accessTokenExpireIn = "15m";
+const accessTokenExpireIn = "1d";
 const refreshTokenExpireIn = "15d";
 
 export const registerUser = async (req, res) => {
