@@ -127,7 +127,7 @@ export const show = async (req, res) => {
 // Update a candidate profile by ID
 export const update = async (req, res) => {
   try {
-    const userId = req.user.profileId;
+    const id = req.user.profileId;
     const uploadsBaseUrl = getUploadsBaseUrl(req);
 
     const imagePath = req.files?.image
@@ -136,11 +136,10 @@ export const update = async (req, res) => {
 
     // Merge file paths into req.body
     if (imagePath) req.body.image = imagePath;
-    const data = await candidate.findOneAndUpdate(
-      { userId: userId },
-      req.body,
-      { new: true, runValidators: true }
-    );
+    const data = await candidate.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
     if (!data) {
       return sendResponse(res, 404, false, "Candidate profile not found");
     }
