@@ -23,6 +23,14 @@ export const index = async (req, res) => {
       .sort(sort)
       .populate("company", "companyName email phone website logo")
       .exec();
+    // Transform the date to MM/DD/YYYY format for each job
+    const transformedJobs = jobs.map((job) => {
+      const transformedJob = job.toObject(); // Convert Mongoose Document to plain JS object
+      if (job.deadline) {
+        transformedJob.deadline = moment(job.deadline).format("MM/DD/YYYY");
+      }
+      return transformedJob;
+    });
 
     // Total count
     const count = await Jobs.countDocuments();
@@ -37,10 +45,17 @@ export const index = async (req, res) => {
     };
 
     // Send response
-    sendResponse(res, 200, true, "Jobs retrieved successfully", jobs, {
-      count,
-      pagination,
-    });
+    sendResponse(
+      res,
+      200,
+      true,
+      "Jobs retrieved successfully",
+      transformedJobs,
+      {
+        count,
+        pagination,
+      }
+    );
   } catch (error) {
     sendResponse(
       res,
@@ -83,7 +98,6 @@ export const show = async (req, res) => {
 export const store = async (req, res) => {
   try {
     const jobData = req.body;
-    const formattedDeadline = moment(jobData.deadline, "MM/DD/YYYY").toDate();
 
     // Extract company ID from the authenticated user
     const companyId = req.user.profileId; // Assuming companyId is stored in req.user
@@ -91,8 +105,8 @@ export const store = async (req, res) => {
     const jobWithCompanyId = {
       ...jobData,
       company: companyId,
-      deadline: formattedDeadline,
     };
+
     if (!companyId) {
       return sendResponse(
         res,
@@ -102,7 +116,9 @@ export const store = async (req, res) => {
       );
     }
     const job = await Jobs.create(jobWithCompanyId);
-
+    if (job.deadline) {
+      job.deadline = moment(job.deadline).format("MM/DD/YYYY");
+    }
     sendResponse(res, 201, true, "Job created successfully", {
       job,
       companyId,

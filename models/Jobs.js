@@ -1,3 +1,4 @@
+import moment from "moment";
 import mongoose from "mongoose";
 
 const jobsSchema = new mongoose.Schema(
@@ -18,7 +19,7 @@ const jobsSchema = new mongoose.Schema(
     experience: { type: String, default: null }, // e.g., Fresh, 2-3 years
     industry: { type: String, default: null }, // e.g., IT, Healthcare
     qualification: { type: String, default: null }, // Minimum Qualification (e.g., Bachelor's, Master's)
-    applicationDeadline: { type: Date, default: null }, // Application deadline date
+    deadline: { type: Date, default: null }, // Application deadline date
     location: {
       country: { type: String, default: null }, // Country of job
       city: { type: String, default: null }, // City of job
@@ -26,5 +27,12 @@ const jobsSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+jobsSchema.pre("save", function (next) {
+  if (this.deadline) {
+    // Convert incoming date to MM/DD/YYYY format
+    this.deadline = moment(this.deadline, "YYYY-MM-DD").format("MM/DD/YYYY");
+  }
+  next();
+});
 
 export default mongoose.model("Jobs", jobsSchema);
