@@ -130,8 +130,8 @@ export const update = async (req, res) => {
     const id = req.user.profileId;
     const uploadsBaseUrl = getUploadsBaseUrl(req);
 
-    const imagePath = req.files?.image
-      ? `${uploadsBaseUrl}/${req.files.image[0].filename}`
+    const imagePath = req.file
+      ? `${uploadsBaseUrl}/${req.file.filename}`
       : null;
 
     // Merge file paths into req.body
@@ -143,13 +143,13 @@ export const update = async (req, res) => {
     if (!data) {
       return sendResponse(res, 404, false, "Candidate profile not found");
     }
-    sendResponse(
-      res,
-      200,
-      true,
-      "Candidate profile updated successfully",
-      data
-    );
+
+    const b = imagePath;
+    sendResponse(res, 200, true, "Candidate profile updated successfully", {
+      data,
+
+      b,
+    });
   } catch (error) {
     sendResponse(
       res,

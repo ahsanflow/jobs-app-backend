@@ -8,7 +8,7 @@ import {
   getMyProfile,
 } from "../controllers/candidateController.js";
 import { authenticate } from "../middleware/auth.js";
-import upload from "../middleware/upload.js";
+import upload, { uploadFile } from "../middleware/upload.js";
 const router = express.Router();
 
 // Get All candidates (with Pagination)**
@@ -21,20 +21,10 @@ router.get("/me", authenticate, getMyProfile);
 router.get("/:id", show);
 
 // Create a candidate**
-router.post(
-  "/",
-  authenticate,
-  upload.fields([{ name: "image", maxCount: 1 }]),
-  store
-);
+router.post("/", authenticate, uploadFile("image"), store);
 
 // Update a candidate by ID**
-router.put(
-  "/",
-  authenticate,
-  upload.fields([{ name: "image", maxCount: 1 }]),
-  update
-);
+router.put("/", authenticate, uploadFile("image"), update);
 
 // Delete a candidate by ID**
 router.delete("/:id", destroy);

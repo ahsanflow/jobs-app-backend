@@ -9,7 +9,7 @@ import {
 } from "../controllers/companyController.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import { validateCompany } from "../validators/companyValidator.js";
-import upload from "../middleware/upload.js";
+import upload, { uploadFile } from "../middleware/upload.js";
 import { authenticate } from "../middleware/auth.js";
 const router = express.Router();
 
@@ -25,25 +25,15 @@ router.get("/:id", show);
 router.post(
   "/",
   authenticate,
-  upload.fields([
-    { name: "logo", maxCount: 1 },
-    { name: "cover", maxCount: 1 },
-  ]),
+  uploadFile("logo"),
+  uploadFile("cover"),
   validateCompany,
   validateRequest,
   store
 );
 
 // Update a Company by ID**
-router.put(
-  "/",
-  authenticate,
-  upload.fields([
-    { name: "logo", maxCount: 1 },
-    { name: "cover", maxCount: 1 },
-  ]),
-  update
-);
+router.put("/", authenticate, uploadFile("logo"), uploadFile("cover"), update);
 
 // Delete a Company by ID**
 router.delete("/", authenticate, destroy);
