@@ -29,7 +29,12 @@ router.post(
 );
 
 // Update a candidate by ID**
-router.put("/", authenticate, update);
+router.put(
+  "/",
+  authenticate,
+  upload.fields([{ name: "image", maxCount: 1 }]),
+  update
+);
 
 // Delete a candidate by ID**
 router.delete("/:id", destroy);
