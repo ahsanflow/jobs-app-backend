@@ -86,11 +86,11 @@ export const store = async (req, res) => {
     const formattedDeadline = moment(jobData.deadline, "MM/DD/YYYY").toDate();
 
     // Extract company ID from the authenticated user
-    const companyId = req.user?.profileId; // Assuming companyId is stored in req.user
+    const companyId = req.user.profileId; // Assuming companyId is stored in req.user
     // Add the company ID to the job data
     const jobWithCompanyId = {
       ...jobData,
-      companyId,
+      company: companyId,
       deadline: formattedDeadline,
     };
     if (!companyId) {
@@ -103,7 +103,10 @@ export const store = async (req, res) => {
     }
     const job = await Jobs.create(jobWithCompanyId);
 
-    sendResponse(res, 201, true, "Job created successfully", job);
+    sendResponse(res, 201, true, "Job created successfully", {
+      job,
+      companyId,
+    });
   } catch (error) {
     sendResponse(res, 500, false, "Error creating job", {}, {}, error.message);
   }
