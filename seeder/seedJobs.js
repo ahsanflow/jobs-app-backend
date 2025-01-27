@@ -71,8 +71,8 @@ export const seedJobs = async (companyIds, count = 10) => {
           "temporary",
         ]),
         salary: {
-          min: faker.number.int({ min: 20000, max: 50000 }),
-          max: faker.number.int({ min: 60000, max: 120000 }),
+          min: faker.number.int({ min: 300, max: 3000, multipleOf: 100 }),
+          max: faker.number.int({ min: 3000, max: 10000, multipleOf: 100 }),
         },
         careerLevel: faker.helpers.arrayElement([
           "Entry Level",
