@@ -2,22 +2,19 @@ import Jobs from "../models/Jobs.js";
 import { sendResponse } from "../utils/response.js";
 import { getPagination } from "../utils/pagination.js";
 import moment from "moment";
+import { jobsQuery } from "../utils/jobsQuery.js";
 
 // **1. Get All Jobs (with Pagination)**
 export const index = async (req, res) => {
   try {
     const { skip, limit, page, pageSize } = getPagination(req.query);
-    const q = req.query;
-    // Extract sorting parameters
-    const { sortBy, sortOrder } = req.query;
 
-    // Default sortBy is 'createdAt' and default sortOrder is descending
-    const sortField = sortBy || "createdAt"; // Default sorting field
-    const order = sortOrder === "asc" ? 1 : -1; // Ascending or Descending
-    // Build sorting object
-    const sort = { [sortField]: order };
+    // Get filters and sorting from the utility
+    const { filters, sort } = await jobsQuery(req.query);
+
     // Query jobs with pagination
-    const jobs = await Jobs.find()
+    console.log("Final Filters for Jobs Query:", filters);
+    const jobs = await Jobs.find(filters)
       .skip(skip)
       .limit(limit)
       .sort(sort)
@@ -33,7 +30,7 @@ export const index = async (req, res) => {
     });
 
     // Total count
-    const count = await Jobs.countDocuments();
+    const count = await Jobs.countDocuments(filters);
 
     // Pagination metadata
     const pagination = {
@@ -54,6 +51,7 @@ export const index = async (req, res) => {
       {
         count,
         pagination,
+        filters,
       }
     );
   } catch (error) {
