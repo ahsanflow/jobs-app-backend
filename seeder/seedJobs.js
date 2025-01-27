@@ -53,9 +53,10 @@ export const seedJobs = async (companyIds, count = 10) => {
           faker.number.int({ min: 3, max: 7 })
         ), // Select 3-7 random skills
         jobType: faker.helpers.arrayElement([
-          "Full Time",
-          "Part Time",
-          "Freelance",
+          "full-time",
+          "part-time",
+          "freelancer",
+          "temporary",
         ]),
         salary: {
           min: faker.number.int({ min: 20000, max: 50000 }),
@@ -68,8 +69,10 @@ export const seedJobs = async (companyIds, count = 10) => {
         ]),
         experience: faker.helpers.arrayElement([
           "Fresh",
-          "1-2 years",
-          "3-5 years",
+          "1-year",
+          "2-year",
+          "3-year",
+          "4-year",
         ]),
         industry: faker.helpers.arrayElement([
           "Technology",
