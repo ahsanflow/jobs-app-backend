@@ -33,6 +33,18 @@ const skills = [
   "Project Management",
   "Scrum",
 ];
+const getRandomDate = () => {
+  const now = new Date(); // Current date and time
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(now.getMonth() - 3); // Set to 3 months earlier
+
+  // Generate a random timestamp between the two dates
+  const randomTimestamp =
+    Math.random() * (now.getTime() - threeMonthsAgo.getTime()) +
+    threeMonthsAgo.getTime();
+
+  return new Date(randomTimestamp); // Return a random date object
+};
 export const seedJobs = async (companyIds, count = 10) => {
   try {
     console.log("Seeding Jobs...");
@@ -96,6 +108,7 @@ export const seedJobs = async (companyIds, count = 10) => {
           Date.now() +
             faker.number.int({ min: 7, max: 30 }) * 24 * 60 * 60 * 1000
         ),
+        createdAt: getRandomDate(), // Assign a random date
       });
       data.push(job);
     }
