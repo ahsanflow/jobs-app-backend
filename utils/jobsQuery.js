@@ -8,8 +8,8 @@ export const jobsQuery = async (query) => {
   if (query.title) {
     filters.title = { $regex: query.title, $options: "i" }; // Case-insensitive title search
   }
-  if (query.company) {
-    filters.company = { $regex: query.company, $options: "i" }; // Company name filter
+  if (query.experience) {
+    filters.experience = { $regex: query.experience, $options: "i" }; // Company name filter
   }
   if (query.jobType) {
     filters.jobType = { $regex: query.jobType, $options: "i" }; // Job Type filter
