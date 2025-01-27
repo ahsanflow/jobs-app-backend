@@ -1,3 +1,4 @@
+import moment from "moment";
 import Company from "../models/Company.js";
 
 // utils/jobQuery.js
@@ -49,6 +50,36 @@ export const jobsQuery = async (query) => {
     if (companyIds.length > 0) {
       filters.company = { $in: companyIds }; // Matches any of the found company IDs
       console.log("Updated Filters with Company:", filters);
+    }
+  }
+  // Date Range Filter
+  if (query.datePosted) {
+    const now = moment(); // Current date and time
+    let startDate;
+
+    switch (query.datePosted) {
+      case "last-hour":
+        startDate = now.subtract(1, "hours");
+        break;
+      case "last-24-hour":
+        startDate = now.subtract(24, "hours");
+        break;
+      case "last-7-days":
+        startDate = now.subtract(7, "days");
+        break;
+      case "last-14-days":
+        startDate = now.subtract(14, "days");
+        break;
+      case "last-30-days":
+        startDate = now.subtract(30, "days");
+        break;
+      default:
+        startDate = null; // No filter applied
+        break;
+    }
+
+    if (startDate) {
+      filters.createdAt = { $gte: startDate.toDate() }; // Filter jobs created after the start date
     }
   }
   // Sorting
