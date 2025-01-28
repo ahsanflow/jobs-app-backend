@@ -15,6 +15,10 @@ export const jobsQuery = async (query) => {
     filters.jobType = { $regex: query.jobType, $options: "i" }; // Job Type filter
   }
 
+  if (query.industry) {
+    filters.industry = { $regex: query.industry, $options: "i" }; // Industry filter
+  }
+
   // Filtering for salary range
   if (query.minSalary || query.maxSalary) {
     filters["salary.min"] = query.minSalary
