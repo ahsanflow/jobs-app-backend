@@ -25,15 +25,25 @@ router.get("/:id", show);
 router.post(
   "/",
   authenticate,
-  uploadFile("logo"),
-  uploadFile("cover"),
+  upload.fields([
+    { name: "logo", maxCount: 1 },
+    { name: "cover", maxCount: 1 },
+  ]),
   validateCompany,
   validateRequest,
   store
 );
 
 // Update a Company by ID**
-router.put("/", authenticate, uploadFile("logo"), uploadFile("cover"), update);
+router.put(
+  "/",
+  authenticate,
+  upload.fields([
+    { name: "logo", maxCount: 1 },
+    { name: "cover", maxCount: 1 },
+  ]),
+  update
+);
 
 // Delete a Company by ID**
 router.delete("/", authenticate, destroy);
