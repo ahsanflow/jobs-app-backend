@@ -25,7 +25,7 @@ const candidateSchema = new mongoose.Schema(
       {
         degree: {
           type: String,
-          enum: ["Bachelor", "Master", "PhD"],
+          // enum: ["Bachelor", "Master", "PhD"],
           default: null,
         }, // Degree type
         institute: { type: String, default: null }, // Institute name
