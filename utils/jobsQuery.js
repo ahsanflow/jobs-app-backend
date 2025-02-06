@@ -56,6 +56,11 @@ export const jobsQuery = async (query) => {
       console.log("Updated Filters with Company:", filters);
     }
   }
+  // Company filter by ID (optional)
+  if (query.companyId) {
+    filters.company = query.companyId; // Directly filter jobs by company ID
+    console.log("Updated Filters with Company ID:", filters);
+  }
   // Date Range Filter
   if (query.datePosted) {
     const now = moment(); // Current date and time
