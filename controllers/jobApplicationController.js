@@ -1,10 +1,15 @@
 import JobApplication from "../models/JobApplication.js";
+import { applicationsQuery } from "../utils/jobApplicationQuery.js";
 import { sendResponse } from "../utils/response.js";
 
 // List all applications
 export const index = async (req, res) => {
   try {
-    const applications = await JobApplication.find()
+    // Get filters and sorting from the utility
+    const { filters, sort } = await applicationsQuery(req.query);
+
+    const applications = await JobApplication.find(filters)
+      .sort(sort)
       .populate("candidate", "name email")
       .populate("job", "title");
 
