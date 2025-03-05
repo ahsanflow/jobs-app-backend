@@ -11,7 +11,7 @@ export const index = async (req, res) => {
     console.log("Final Filters for Jobs Query:", filters);
     const applications = await JobApplication.find(filters)
       .sort(sort)
-      .populate("candidate", "name email")
+      .populate("candidate", "fullName email jobTitle  image ")
       .populate("job", "title");
 
     sendResponse(
