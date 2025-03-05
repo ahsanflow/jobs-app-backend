@@ -6,7 +6,7 @@ export const applicationsQuery = async (query) => {
 
   // Filter by Job ID
   if (query.jobId) {
-    filters.jobId = query.job;
+    filters.job = query.jobId;
   }
 
   // Filter by Applicant Name
