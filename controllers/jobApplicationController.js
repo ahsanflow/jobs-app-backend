@@ -7,7 +7,8 @@ export const index = async (req, res) => {
   try {
     // Get filters and sorting from the utility
     const { filters, sort } = await applicationsQuery(req.query);
-
+    // Query jobs with pagination
+    console.log("Final Filters for Jobs Query:", filters);
     const applications = await JobApplication.find(filters)
       .sort(sort)
       .populate("candidate", "name email")
