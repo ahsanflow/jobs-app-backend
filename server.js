@@ -5,6 +5,7 @@ import candidateRoutes from "./routes/candidateRoutes.js"; // ES module import
 import companyRoutes from "./routes/companyRoutes.js";
 import authRoutes from "./routes/authRoutes.js"; // ES module import
 import jobsRoutes from "./routes/jobsRoutes.js"; // ES module import
+import jobApplicationRoutes from "./routes/jobApplicationRoutes.js"; // ES module import
 import cors from "cors"; // Import cors
 import { FRONTEND_URL, PORT, UPLOAD_DIR } from "./config/index.js";
 import cookieParser from "cookie-parser";
@@ -33,6 +34,7 @@ app.use("/api/candidates", candidateRoutes);
 app.use("/api/jobs", jobsRoutes);
 app.use("/api/company", companyRoutes);
 app.use("/api/auth", authRoutes); // Use the authRoutes
+app.use("/api/application", jobApplicationRoutes); // Use the authRoutes
 app.get("/", (req, res) => {
   res.status(401).json({ message: "Restricted Area!" });
 });

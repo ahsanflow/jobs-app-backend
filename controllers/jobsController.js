@@ -3,6 +3,7 @@ import { sendResponse } from "../utils/response.js";
 import { getPagination } from "../utils/pagination.js";
 import moment from "moment";
 import { jobsQuery } from "../utils/jobsQuery.js";
+import JobApplication from "../models/JobApplication.js";
 
 // **1. Get All Jobs (with Pagination)**
 export const index = async (req, res) => {
@@ -21,13 +22,23 @@ export const index = async (req, res) => {
       .populate("company", "companyName email phone website logo")
       .exec();
     // Transform the date to MM/DD/YYYY format for each job
-    const transformedJobs = jobs.map((job) => {
-      const transformedJob = job.toObject(); // Convert Mongoose Document to plain JS object
-      if (job.deadline) {
-        transformedJob.deadline = moment(job.deadline).format("MM/DD/YYYY");
-      }
-      return transformedJob;
-    });
+    const transformedJobs = await Promise.all(
+      jobs.map(async (job) => {
+        const transformedJob = job.toObject(); // Convert Mongoose Document to plain JS object
+        if (job.deadline) {
+          transformedJob.deadline = moment(job.deadline).format("MM/DD/YYYY");
+        }
+
+        // Count applications for this job
+        const applicationCount = await JobApplication.countDocuments({
+          job: job._id,
+        });
+
+        transformedJob.applicationCount = applicationCount; // Attach count
+
+        return transformedJob;
+      })
+    );
 
     // Total count
     const count = await Jobs.countDocuments(filters);
@@ -72,13 +83,21 @@ export const show = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Find job and populate company details
     const job = await Jobs.findById(id).populate("company", "name location");
 
     if (!job) {
       return sendResponse(res, 404, false, "Job not found");
     }
 
-    sendResponse(res, 200, true, "Job retrieved successfully", job);
+    // Count applications for this job
+    const applicationCount = await JobApplication.countDocuments({ job: id });
+
+    // Convert Mongoose Document to plain JS object & add application count
+    const transformedJob = job.toObject();
+    transformedJob.applicationCount = applicationCount;
+
+    sendResponse(res, 200, true, "Job retrieved successfully", transformedJob);
   } catch (error) {
     sendResponse(
       res,

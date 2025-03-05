@@ -1,5 +1,5 @@
-import JobApplication from "../models/JobApplication";
-import { sendResponse } from "../utils/response";
+import JobApplication from "../models/JobApplication.js";
+import { sendResponse } from "../utils/response.js";
 
 // List all applications
 export const index = async (req, res) => {
