@@ -20,7 +20,7 @@ export const registerUser = async (req, res) => {
       return sendResponse(res, 400, false, "User already exists");
     }
 
-    // Capitalize the first letter of the role to match your schema
+    // Capitalize the first letter of the role
     const capitalizedRole =
       role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
 
@@ -31,30 +31,47 @@ export const registerUser = async (req, res) => {
     // Create corresponding profiles based on the role
     let profileData;
     if (capitalizedRole === "Company") {
-      // Create Company Profile
-      profileData = await Company.create({
-        userId: user._id,
-        email: email, // Add other fields as needed
-      });
+      profileData = await Company.create({ userId: user._id, email });
     } else if (capitalizedRole === "Candidate") {
-      // Create Candidate Profile
-      profileData = await Candidate.create({
-        userId: user._id,
-        email: email,
-      });
+      profileData = await Candidate.create({ userId: user._id, email });
     }
 
-    // Link the profile to the user using profileId
-    user.profile = profileData._id; // Use profileId to link
+    // Link the profile to the user
+    user.profile = profileData._id;
     await user.save();
 
+    // JWT Payload
+    const tokenPayload = {
+      id: user._id,
+      role: user.role,
+      profileId: user.profile,
+    };
+
+    // Generate access and refresh tokens
+    const accessToken = jwt.sign(tokenPayload, JWT_SECRET, {
+      expiresIn: accessTokenExpireIn,
+    });
+    const refreshToken = jwt.sign(tokenPayload, JWT_SECRET, {
+      expiresIn: refreshTokenExpireIn,
+    });
+
+    // Store the refresh token in a secure HTTP-only cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    // Send response including the JWT token
     sendResponse(res, 201, true, "User registered successfully", {
+      accessToken,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        profileId: user.profile, // Return profileId instead of profile details
+        profileId: user.profile,
       },
     });
   } catch (error) {
