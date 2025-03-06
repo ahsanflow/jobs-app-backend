@@ -1,5 +1,6 @@
 import moment from "moment";
 import User from "../models/User.js"; // Assuming applicants are stored in a User model
+import Jobs from "../models/Jobs.js";
 
 export const applicationsQuery = async (query) => {
   const filters = {};
@@ -22,10 +23,12 @@ export const applicationsQuery = async (query) => {
   }
 
   // Filter by Applicant ID (if known)
-  if (query.applicantId) {
-    filters.applicantId = query.applicantId;
+  if (query.candidateId) {
+    filters.candidate = query.candidateId;
   }
-
+  if (query.companyId) {
+    filters.job = await Jobs.find({ company: query.companyId }).distinct("_id");
+  }
   // Filter by Application Status
   if (query.status) {
     filters.status = { $regex: query.status, $options: "i" }; // e.g., "pending", "accepted", "rejected"

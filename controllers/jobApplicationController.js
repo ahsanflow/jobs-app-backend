@@ -19,14 +19,35 @@ export const index = async (req, res) => {
           path: "company",
           select: "companyName email phone website logo", // Get company details
         },
-      });
+      })
+      .lean() // Converts the entire result to plain JS objects
+      .exec();
+    const transformedApplications = applications.map((application) => {
+      const job = application.job || {};
+      const company = job.company || null;
 
+      return {
+        _id: application._id,
+        status: application.status,
+        appliedAt: application.appliedAt,
+        candidate: application.candidate,
+        job: job
+          ? {
+              _id: job._id,
+              title: job.title,
+              location: job.location,
+              deadline: job.deadline,
+            }
+          : null,
+        company: company || null,
+      };
+    });
     sendResponse(
       res,
       200,
       true,
       "Applications fetched successfully.",
-      applications
+      transformedApplications
     );
   } catch (error) {
     sendResponse(
@@ -107,18 +128,38 @@ export const show = async (req, res) => {
           path: "company",
           select: "companyName email phone website logo", // Get company details
         },
-      });
+      })
+      .lean() // Converts the entire result to plain JS objects
+      .exec();
 
     if (!application) {
       return sendResponse(res, 404, false, "Application not found.");
     }
+    const job = application.job || {};
+    const company = job.company || null;
 
+    // Transform response to separate company data
+    const transformedApplication = {
+      _id: application._id,
+      status: application.status,
+      appliedAt: application.appliedAt,
+      candidate: application.candidate,
+      job: job
+        ? {
+            _id: job._id,
+            title: job.title,
+            location: job.location,
+            deadline: job.deadline,
+          }
+        : null,
+      company, // Company is now separate
+    };
     sendResponse(
       res,
       200,
       true,
       "Application fetched successfully.",
-      application
+      transformedApplication
     );
   } catch (error) {
     sendResponse(
