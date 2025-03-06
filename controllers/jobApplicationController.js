@@ -12,7 +12,14 @@ export const index = async (req, res) => {
     const applications = await JobApplication.find(filters)
       .sort(sort)
       .populate("candidate", "fullName email jobTitle  image ")
-      .populate("job", "title");
+      .populate({
+        path: "job",
+        select: "title location deadline", // Get job details"job", "title location deadline"
+        populate: {
+          path: "company",
+          select: "companyName email phone website logo", // Get company details
+        },
+      });
 
     sendResponse(
       res,
@@ -92,8 +99,15 @@ export const show = async (req, res) => {
     const { id } = req.params;
 
     const application = await JobApplication.findById(id)
-      .populate("candidate", "name email")
-      .populate("job", "title");
+      .populate("candidate", "fullName email jobTitle  image")
+      .populate({
+        path: "job",
+        select: "title location deadline", // Get job details"job", "title location deadline"
+        populate: {
+          path: "company",
+          select: "companyName email phone website logo", // Get company details
+        },
+      });
 
     if (!application) {
       return sendResponse(res, 404, false, "Application not found.");
